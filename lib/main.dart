@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'background.dart';
+import 'pages/login_page.dart';
+import 'pages/onboarding_page.dart';
 import 'pages/home_page.dart';
 import 'utils/constants.dart';
+import 'services/user_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Supabase.initialize(url: AppConstants.kSupabaseUrl, anonKey: AppConstants.kSupabaseAnonKey);
+  await Supabase.initialize(
+    url: AppConstants.kSupabaseUrl,
+    anonKey: AppConstants.kSupabaseAnonKey,
+  );
   runApp(const MainApp());
 }
 
@@ -15,9 +21,103 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Background(child: HomePage()),
+      title: 'Closet Fairy',
+      theme: ThemeData(
+        fontFamily: AppConstants.secondaryFont,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: AppConstants.primaryBlue,
+          primary: AppConstants.primaryBlue,
+          secondary: AppConstants.accentCoral,
+        ),
+        useMaterial3: true,
+      ),
+      home: const Background(child: AuthWrapper()),
+    );
+  }
+}
+
+class AuthWrapper extends StatefulWidget {
+  const AuthWrapper({super.key});
+
+  @override
+  State<AuthWrapper> createState() => _AuthWrapperState();
+}
+
+class _AuthWrapperState extends State<AuthWrapper> {
+  @override
+  void initState() {
+    super.initState();
+    // Debug: Check initial auth state
+    _checkInitialAuthState();
+  }
+
+  Future<void> _checkInitialAuthState() async {
+    final session = Supabase.instance.client.auth.currentSession;
+    print(
+      'Initial auth state - Session: ${session?.user.email ?? "No session"}',
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<AuthState>(
+      stream: Supabase.instance.client.auth.onAuthStateChange,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  AppConstants.primaryBlue,
+                ),
+              ),
+            ),
+          );
+        }
+
+        final session = snapshot.data?.session;
+        print(
+          'Auth state changed - Session: ${session?.user.email ?? "No session"}',
+        );
+
+        if (session == null) {
+          // User is not authenticated
+          print('No session found, showing login page');
+          return const LoginPage();
+        }
+
+        // User is authenticated - check if they need onboarding
+        return FutureBuilder<bool>(
+          future: UserService.hasCompletedOnboarding(),
+          builder: (context, onboardingSnapshot) {
+            if (onboardingSnapshot.connectionState == ConnectionState.waiting) {
+              return const Scaffold(
+                body: Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      AppConstants.primaryBlue,
+                    ),
+                  ),
+                ),
+              );
+            }
+
+            final hasCompletedOnboarding = onboardingSnapshot.data ?? false;
+            print('Onboarding status: $hasCompletedOnboarding');
+
+            if (!hasCompletedOnboarding) {
+              print('User needs onboarding, showing onboarding page');
+              return const OnboardingPage();
+            }
+
+            // User is authenticated and onboarded
+            print('User completed onboarding, showing homepage');
+            return const HomePage();
+          },
+        );
+      },
     );
   }
 }

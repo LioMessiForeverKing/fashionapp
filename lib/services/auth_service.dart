@@ -1,18 +1,21 @@
 import 'dart:async';
-import 'package:flutter/foundation.dart' show kIsWeb, defaultTargetPlatform, TargetPlatform;
+import 'package:flutter/foundation.dart'
+    show kIsWeb, defaultTargetPlatform, TargetPlatform;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../utils/constants.dart';
+import 'user_service.dart';
 
 class AuthService {
   static final SupabaseClient _supabase = Supabase.instance.client;
-  
+
   // Get current user
   static User? get currentUser => _supabase.auth.currentUser;
-  
+
   // Get auth state stream
-  static Stream<AuthState> get authStateChanges => _supabase.auth.onAuthStateChange;
-  
+  static Stream<AuthState> get authStateChanges =>
+      _supabase.auth.onAuthStateChange;
+
   // Sign in with Google
   static Future<void> signInWithGoogle() async {
     final googleSignIn = GoogleSignIn(
@@ -38,13 +41,21 @@ class AuthService {
       idToken: idToken,
       accessToken: accessToken,
     );
+
+    // Create basic user record after successful sign in
+    try {
+      await UserService.createBasicUserRecord();
+    } catch (e) {
+      print('Error creating basic user record after sign in: $e');
+      // Don't throw here as sign in was successful
+    }
   }
-  
+
   // Sign out
   static Future<void> signOut() async {
     await _supabase.auth.signOut();
   }
-  
+
   // Get platform-specific client ID
   static String? _platformClientId() {
     if (kIsWeb) return null;

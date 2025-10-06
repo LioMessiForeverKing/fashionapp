@@ -11,6 +11,7 @@ dependencies:
     sdk: flutter
   supabase_flutter: ^2.9.1
   google_sign_in: ^6.2.1
+  http: ^1.1.0
 
 dev_dependencies:
   flutter_test:
@@ -21,3 +22,15 @@ flutter:
   uses-material-design: true
   assets:
     - assets/Logos/
+    - assets/Fonts/
+  fonts:
+    - family: PlayfairDisplay
+      fonts:
+        - asset: assets/Fonts/Playfair_Display/PlayfairDisplay-VariableFont_wght.ttf
+        - asset: assets/Fonts/Playfair_Display/PlayfairDisplay-Italic-VariableFont_wght.ttf
+          style: italic
+    - family: Karla
+      fonts:
+        - asset: assets/Fonts/Karla/Karla-VariableFont_wght.ttf
+        - asset: assets/Fonts/Karla/Karla-Italic-VariableFont_wght.ttf
+          style: italic
