@@ -1,21 +1,32 @@
-Pixelify Sans Variable Font
-===========================
+Karla Variable Font
+===================
 
-This download contains Pixelify Sans as both a variable font and static fonts.
+This download contains Karla as both variable fonts and static fonts.
 
-Pixelify Sans is a variable font with this axis:
+Karla is a variable font with this axis:
   wght
 
-This means all the styles are contained in a single file:
-  PixelifySans-VariableFont_wght.ttf
+This means all the styles are contained in these files:
+  Karla/Karla-VariableFont_wght.ttf
+  Karla/Karla-Italic-VariableFont_wght.ttf
 
 If your app fully supports variable fonts, you can now pick intermediate styles
 that aren’t available as static fonts. Not all apps support variable fonts, and
-in those cases you can use the static font files for Pixelify Sans:
-  static/PixelifySans-Regular.ttf
-  static/PixelifySans-Medium.ttf
-  static/PixelifySans-SemiBold.ttf
-  static/PixelifySans-Bold.ttf
+in those cases you can use the static font files for Karla:
+  Karla/static/Karla-ExtraLight.ttf
+  Karla/static/Karla-Light.ttf
+  Karla/static/Karla-Regular.ttf
+  Karla/static/Karla-Medium.ttf
+  Karla/static/Karla-SemiBold.ttf
+  Karla/static/Karla-Bold.ttf
+  Karla/static/Karla-ExtraBold.ttf
+  Karla/static/Karla-ExtraLightItalic.ttf
+  Karla/static/Karla-LightItalic.ttf
+  Karla/static/Karla-Italic.ttf
+  Karla/static/Karla-MediumItalic.ttf
+  Karla/static/Karla-SemiBoldItalic.ttf
+  Karla/static/Karla-BoldItalic.ttf
+  Karla/static/Karla-ExtraBoldItalic.ttf
 
 Get started
 -----------
