@@ -444,7 +444,7 @@ class _InspirationFeedPageState extends State<InspirationFeedPage>
         controller: _scrollController,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          childAspectRatio: 0.75,
+          childAspectRatio: 0.8, // Increased from 0.75 to give more height
           crossAxisSpacing: AppConstants.spacingM,
           mainAxisSpacing: AppConstants.spacingM,
         ),
@@ -471,35 +471,35 @@ class _InspirationFeedPageState extends State<InspirationFeedPage>
           borderRadius: BorderRadius.circular(AppConstants.radiusL),
           child: Stack(
             children: [
-              // Image
-              Positioned.fill(
-                child: Image.network(
-                  inspiration['image_url'],
-                  fit: BoxFit.cover,
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return Container(
-                      color: AppConstants.neutralGray,
-                      child: const Center(
-                        child: CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            AppConstants.primaryBlue,
-                          ),
+              // Image - Simplified for testing
+              Image.network(
+                inspiration['image_url'],
+                width: double.infinity,
+                height: double.infinity,
+                fit: BoxFit.cover,
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return Container(
+                    color: AppConstants.neutralGray,
+                    child: const Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          AppConstants.primaryBlue,
                         ),
                       ),
-                    );
-                  },
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      color: AppConstants.neutralGray,
-                      child: const Icon(
-                        Icons.image_not_supported,
-                        color: AppConstants.textDark,
-                        size: 48,
-                      ),
-                    );
-                  },
-                ),
+                    ),
+                  );
+                },
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    color: AppConstants.neutralGray,
+                    child: const Icon(
+                      Icons.image_not_supported,
+                      color: AppConstants.textDark,
+                      size: 48,
+                    ),
+                  );
+                },
               ),
 
               // Gradient overlay
@@ -820,12 +820,345 @@ class _InspirationFeedPageState extends State<InspirationFeedPage>
   }
 
   void _showInspirationDetail(Map<String, dynamic> inspiration) {
-    // TODO: Implement inspiration detail view
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('${inspiration['title']} - Detail view coming soon!'),
-        backgroundColor: AppConstants.primaryBlue,
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => _buildInspirationDetailModal(inspiration),
+    );
+  }
+
+  Widget _buildInspirationDetailModal(Map<String, dynamic> inspiration) {
+    final isSaved = inspiration['is_saved'] as bool;
+
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.9,
+      decoration: const BoxDecoration(
+        color: AppConstants.neutralWhite,
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(AppConstants.radiusXL),
+        ),
+      ),
+      child: Column(
+        children: [
+          // Handle bar
+          Container(
+            margin: const EdgeInsets.only(top: AppConstants.spacingM),
+            width: 40,
+            height: 4,
+            decoration: BoxDecoration(
+              color: AppConstants.textDark.withOpacity(0.3),
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+
+          // Header
+          Padding(
+            padding: const EdgeInsets.all(AppConstants.spacingL),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    inspiration['title'] ?? 'Fashion Inspiration',
+                    style: const TextStyle(
+                      fontFamily: AppConstants.primaryFont,
+                      fontSize: 24,
+                      fontWeight: FontWeight.w600,
+                      color: AppConstants.textDark,
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () => _toggleSave(inspiration['id'], isSaved),
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: isSaved
+                          ? AppConstants.accentCoral.withOpacity(0.1)
+                          : AppConstants.neutralGray,
+                      borderRadius: BorderRadius.circular(AppConstants.radiusM),
+                    ),
+                    child: Icon(
+                      isSaved ? Icons.favorite : Icons.favorite_border,
+                      color: isSaved
+                          ? AppConstants.accentCoral
+                          : AppConstants.textDark,
+                      size: 24,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Image
+          Expanded(
+            child: Container(
+              margin: const EdgeInsets.symmetric(
+                horizontal: AppConstants.spacingL,
+              ),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(AppConstants.radiusL),
+                boxShadow: AppConstants.softShadow,
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(AppConstants.radiusL),
+                child: Image.network(
+                  inspiration['image_url'],
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Container(
+                      color: AppConstants.neutralGray,
+                      child: const Center(
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            AppConstants.primaryBlue,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      color: AppConstants.neutralGray,
+                      child: const Icon(
+                        Icons.image_not_supported,
+                        color: AppConstants.textDark,
+                        size: 64,
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+
+          // Content
+          Padding(
+            padding: const EdgeInsets.all(AppConstants.spacingL),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Description
+                Text(
+                  inspiration['description'] ?? 'Beautiful fashion inspiration',
+                  style: const TextStyle(
+                    fontFamily: AppConstants.secondaryFont,
+                    fontSize: 16,
+                    color: AppConstants.textDark,
+                    height: 1.5,
+                  ),
+                ),
+
+                const SizedBox(height: AppConstants.spacingL),
+
+                // Style tags
+                if (inspiration['style_keywords'] != null &&
+                    (inspiration['style_keywords'] as List).isNotEmpty)
+                  _buildTagsSection('Style', inspiration['style_keywords']),
+
+                const SizedBox(height: AppConstants.spacingM),
+
+                // Color palette
+                if (inspiration['color_palette'] != null &&
+                    (inspiration['color_palette'] as List).isNotEmpty)
+                  _buildColorPalette(inspiration['color_palette']),
+
+                const SizedBox(height: AppConstants.spacingL),
+
+                // Action buttons
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          // TODO: Implement "Create Outfit" functionality
+                          Navigator.pop(context);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Create Outfit feature coming soon! ✨',
+                              ),
+                              backgroundColor: AppConstants.accentGreen,
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.style, size: 20),
+                        label: const Text('Create Outfit'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppConstants.primaryBlue,
+                          foregroundColor: AppConstants.neutralWhite,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                              AppConstants.radiusM,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: AppConstants.spacingM),
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: () {
+                          // TODO: Implement share functionality
+                          Navigator.pop(context);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Share feature coming soon! 📤'),
+                              backgroundColor: AppConstants.accentGreen,
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.share, size: 20),
+                        label: const Text('Share'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: AppConstants.primaryBlue,
+                          side: const BorderSide(
+                            color: AppConstants.primaryBlue,
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                              AppConstants.radiusM,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
+  }
+
+  Widget _buildTagsSection(String title, List<dynamic> tags) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            fontFamily: AppConstants.secondaryFont,
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: AppConstants.textDark,
+          ),
+        ),
+        const SizedBox(height: AppConstants.spacingS),
+        Wrap(
+          spacing: AppConstants.spacingS,
+          runSpacing: AppConstants.spacingS,
+          children: tags
+              .map(
+                (tag) => Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppConstants.spacingM,
+                    vertical: AppConstants.spacingS,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppConstants.primaryBlue.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(AppConstants.radiusL),
+                  ),
+                  child: Text(
+                    tag.toString().toUpperCase(),
+                    style: const TextStyle(
+                      fontFamily: AppConstants.secondaryFont,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: AppConstants.primaryBlue,
+                    ),
+                  ),
+                ),
+              )
+              .toList(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildColorPalette(List<dynamic> colors) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Color Palette',
+          style: TextStyle(
+            fontFamily: AppConstants.secondaryFont,
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: AppConstants.textDark,
+          ),
+        ),
+        const SizedBox(height: AppConstants.spacingS),
+        Row(
+          children: colors
+              .take(6)
+              .map(
+                (color) => Container(
+                  margin: const EdgeInsets.only(right: AppConstants.spacingS),
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: _getColorFromString(color.toString()),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: AppConstants.textDark.withOpacity(0.2),
+                      width: 1,
+                    ),
+                  ),
+                ),
+              )
+              .toList(),
+        ),
+      ],
+    );
+  }
+
+  Color _getColorFromString(String colorName) {
+    switch (colorName.toLowerCase()) {
+      case 'black':
+        return Colors.black;
+      case 'white':
+        return Colors.white;
+      case 'gray':
+        return Colors.grey;
+      case 'red':
+        return Colors.red;
+      case 'blue':
+        return Colors.blue;
+      case 'green':
+        return Colors.green;
+      case 'yellow':
+        return Colors.yellow;
+      case 'pink':
+        return Colors.pink;
+      case 'purple':
+        return Colors.purple;
+      case 'orange':
+        return Colors.orange;
+      case 'brown':
+        return Colors.brown;
+      case 'navy':
+        return const Color(0xFF1B2951);
+      case 'cream':
+        return const Color(0xFFF5F5DC);
+      case 'gold':
+        return const Color(0xFFFFD700);
+      case 'silver':
+        return const Color(0xFFC0C0C0);
+      case 'beige':
+        return const Color(0xFFF5F5DC);
+      case 'denim':
+        return const Color(0xFF1560BD);
+      default:
+        return Colors.grey;
+    }
   }
 }

@@ -1,0 +1,116 @@
+-- Sample data for the inspirations table
+-- Run this in your Supabase SQL editor
+
+INSERT INTO inspirations (id, user_id, image_url, source_url, source, title, description, style_keywords, color_palette, occasion, tags, created_at) VALUES
+(
+  gen_random_uuid(),
+  null, -- null for curated content
+  'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=600&fit=crop',
+  'https://unsplash.com/photos/1441986300917-64674bd600d8',
+  'unsplash',
+  'Minimalist Office Look',
+  'Clean and professional for the modern workplace',
+  ARRAY['minimalist', 'professional', 'clean'],
+  ARRAY['black', 'white', 'gray'],
+  'work',
+  ARRAY['office', 'business', 'minimalist'],
+  NOW()
+),
+(
+  gen_random_uuid(),
+  null,
+  'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=400&h=600&fit=crop',
+  'https://unsplash.com/photos/1515372039744-b8f02a3ae446',
+  'unsplash',
+  'Boho Weekend Vibes',
+  'Free-spirited and comfortable for weekend adventures',
+  ARRAY['boho', 'casual', 'relaxed'],
+  ARRAY['brown', 'cream', 'orange'],
+  'casual-weekend',
+  ARRAY['boho', 'weekend', 'comfortable'],
+  NOW()
+),
+(
+  gen_random_uuid(),
+  null,
+  'https://images.unsplash.com/photo-1509631179647-0177331693ae?w=400&h=600&fit=crop',
+  'https://unsplash.com/photos/1509631179647-0177331693ae',
+  'unsplash',
+  'Elegant Date Night',
+  'Sophisticated and romantic for special evenings',
+  ARRAY['elegant', 'romantic', 'sophisticated'],
+  ARRAY['black', 'red', 'gold'],
+  'date-night',
+  ARRAY['elegant', 'date-night', 'romantic'],
+  NOW()
+),
+(
+  gen_random_uuid(),
+  null,
+  'https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=400&h=600&fit=crop',
+  'https://unsplash.com/photos/1469334031218-e382a71b716b',
+  'unsplash',
+  'Preppy Spring Style',
+  'Classic and polished for spring occasions',
+  ARRAY['preppy', 'classic', 'polished'],
+  ARRAY['navy', 'white', 'pink'],
+  'casual-weekend',
+  ARRAY['preppy', 'spring', 'classic'],
+  NOW()
+),
+(
+  gen_random_uuid(),
+  null,
+  'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400&h=600&fit=crop',
+  'https://unsplash.com/photos/1483985988355-763728e1935b',
+  'unsplash',
+  'Edgy Street Style',
+  'Bold and unconventional for making a statement',
+  ARRAY['edgy', 'street', 'bold'],
+  ARRAY['black', 'red', 'silver'],
+  'party',
+  ARRAY['edgy', 'street-style', 'bold'],
+  NOW()
+),
+(
+  gen_random_uuid(),
+  null,
+  'https://images.unsplash.com/photo-1515377905703-c4788e51af15?w=400&h=600&fit=crop',
+  'https://unsplash.com/photos/1515377905703-c4788e51af15',
+  'unsplash',
+  'Casual Coffee Date',
+  'Relaxed and comfortable for everyday moments',
+  ARRAY['casual', 'comfortable', 'relaxed'],
+  ARRAY['blue', 'white', 'brown'],
+  'casual-weekend',
+  ARRAY['casual', 'coffee', 'comfortable'],
+  NOW()
+),
+(
+  gen_random_uuid(),
+  null,
+  'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=400&h=600&fit=crop',
+  'https://unsplash.com/photos/1490481651871-ab68de25d43d',
+  'unsplash',
+  'Romantic Garden Party',
+  'Feminine and dreamy for outdoor celebrations',
+  ARRAY['romantic', 'feminine', 'dreamy'],
+  ARRAY['pink', 'white', 'green'],
+  'party',
+  ARRAY['romantic', 'garden', 'feminine'],
+  NOW()
+),
+(
+  gen_random_uuid(),
+  null,
+  'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&h=600&fit=crop',
+  'https://unsplash.com/photos/1515886657613-9f3515b0c78f',
+  'unsplash',
+  'Modern Minimalist',
+  'Clean lines and simple elegance',
+  ARRAY['minimalist', 'modern', 'clean'],
+  ARRAY['white', 'black', 'gray'],
+  'work',
+  ARRAY['minimalist', 'modern', 'elegant'],
+  NOW()
+);

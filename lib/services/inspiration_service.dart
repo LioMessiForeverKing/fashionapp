@@ -114,16 +114,72 @@ class InspirationService {
     },
   ];
 
-  // Get inspiration feed (for now using sample data)
+  // Get inspiration feed from database
   static Future<List<Map<String, dynamic>>> getInspirationFeed({
     String? searchQuery,
     List<String>? styleFilters,
     List<String>? colorFilters,
     String? occasionFilter,
   }) async {
-    // Simulate API delay
-    await Future.delayed(const Duration(milliseconds: 500));
+    try {
+      var query = _supabase.from('inspirations').select('*');
 
+      // Search filter
+      if (searchQuery != null && searchQuery.isNotEmpty) {
+        query = query.or(
+          'title.ilike.%$searchQuery%,description.ilike.%$searchQuery%',
+        );
+      }
+
+      // Style filter
+      if (styleFilters != null && styleFilters.isNotEmpty) {
+        query = query.overlaps('style_keywords', styleFilters);
+      }
+
+      // Color filter
+      if (colorFilters != null && colorFilters.isNotEmpty) {
+        query = query.overlaps('color_palette', colorFilters);
+      }
+
+      // Occasion filter
+      if (occasionFilter != null && occasionFilter.isNotEmpty) {
+        query = query.eq('occasion', occasionFilter);
+      }
+
+      final List<Map<String, dynamic>> inspirations = await query.order(
+        'created_at',
+        ascending: false,
+      );
+
+      if (inspirations.isNotEmpty) {
+        return inspirations;
+      } else {
+        return _getFilteredSampleData(
+          searchQuery: searchQuery,
+          styleFilters: styleFilters,
+          colorFilters: colorFilters,
+          occasionFilter: occasionFilter,
+        );
+      }
+    } catch (e) {
+      print('Error fetching inspiration feed: $e');
+      // Fallback to sample data if database fails
+      return _getFilteredSampleData(
+        searchQuery: searchQuery,
+        styleFilters: styleFilters,
+        colorFilters: colorFilters,
+        occasionFilter: occasionFilter,
+      );
+    }
+  }
+
+  // Fallback method for sample data filtering
+  static List<Map<String, dynamic>> _getFilteredSampleData({
+    String? searchQuery,
+    List<String>? styleFilters,
+    List<String>? colorFilters,
+    String? occasionFilter,
+  }) {
     List<Map<String, dynamic>> inspirations = List.from(_sampleInspirations);
 
     // Apply filters
@@ -167,33 +223,13 @@ class InspirationService {
     if (user == null) return;
 
     try {
-      // Find the inspiration in sample data
-      final inspiration = _sampleInspirations.firstWhere(
-        (item) => item['id'] == inspirationId,
-        orElse: () => throw Exception('Inspiration not found'),
-      );
-
-      // Save to database
-      await _supabase.from('inspirations').insert({
+      // Create a user_inspirations record to track saved inspirations
+      await _supabase.from('user_inspirations').insert({
         'user_id': user.id,
-        'image_url': inspiration['image_url'],
-        'source_url': 'https://unsplash.com',
-        'source': inspiration['source'],
-        'style_keywords': inspiration['style_keywords'],
-        'color_palette': inspiration['color_palette'],
-        'occasion': inspiration['occasion'],
-        'formality': inspiration['formality'],
+        'inspiration_id': inspirationId,
         'is_saved': true,
         'created_at': DateTime.now().toIso8601String(),
       });
-
-      // Update local state
-      final index = _sampleInspirations.indexWhere(
-        (item) => item['id'] == inspirationId,
-      );
-      if (index != -1) {
-        _sampleInspirations[index]['is_saved'] = true;
-      }
     } catch (e) {
       print('Error saving inspiration: $e');
       throw Exception('Failed to save inspiration');
@@ -206,25 +242,12 @@ class InspirationService {
     if (user == null) return;
 
     try {
-      // Remove from database
+      // Remove from user_inspirations table
       await _supabase
-          .from('inspirations')
+          .from('user_inspirations')
           .delete()
           .eq('user_id', user.id)
-          .eq(
-            'image_url',
-            _sampleInspirations.firstWhere(
-              (item) => item['id'] == inspirationId,
-            )['image_url'],
-          );
-
-      // Update local state
-      final index = _sampleInspirations.indexWhere(
-        (item) => item['id'] == inspirationId,
-      );
-      if (index != -1) {
-        _sampleInspirations[index]['is_saved'] = false;
-      }
+          .eq('inspiration_id', inspirationId);
     } catch (e) {
       print('Error unsaving inspiration: $e');
       throw Exception('Failed to unsave inspiration');
@@ -238,8 +261,11 @@ class InspirationService {
 
     try {
       final response = await _supabase
-          .from('inspirations')
-          .select()
+          .from('user_inspirations')
+          .select('''
+            *,
+            inspirations(*)
+          ''')
           .eq('user_id', user.id)
           .eq('is_saved', true)
           .order('created_at', ascending: false);
@@ -248,6 +274,27 @@ class InspirationService {
     } catch (e) {
       print('Error fetching saved inspirations: $e');
       return [];
+    }
+  }
+
+  // Check if an inspiration is saved by the current user
+  static Future<bool> isInspirationSaved(String inspirationId) async {
+    final user = currentUser;
+    if (user == null) return false;
+
+    try {
+      final response = await _supabase
+          .from('user_inspirations')
+          .select('id')
+          .eq('user_id', user.id)
+          .eq('inspiration_id', inspirationId)
+          .eq('is_saved', true)
+          .maybeSingle();
+
+      return response != null;
+    } catch (e) {
+      print('Error checking if inspiration is saved: $e');
+      return false;
     }
   }
 
