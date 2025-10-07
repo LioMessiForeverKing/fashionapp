@@ -68,9 +68,5 @@
 	<array>
 		<string>armv7</string>
 	</array>
-	<key>UIBackgroundModes</key>
-	<array>
-		<string>background-processing</string>
-	</array>
 </dict>
 </plist>

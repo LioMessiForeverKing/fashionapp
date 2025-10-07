@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/auth_service.dart';
 import '../services/user_service.dart';
+import '../services/closet_service.dart';
+import '../services/inspiration_service.dart';
 import '../utils/constants.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -27,6 +29,10 @@ class _ProfilePageState extends State<ProfilePage> {
   String? _selectedBodyType;
   String? _selectedBudget;
   String? _selectedLifestyle;
+
+  // Stats data
+  int _totalClothingItems = 0;
+  int _savedInspirations = 0;
 
   @override
   void initState() {
@@ -92,6 +98,9 @@ class _ProfilePageState extends State<ProfilePage> {
           setState(() {});
         }
       }
+
+      // Load stats
+      await _loadStats();
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -104,6 +113,30 @@ class _ProfilePageState extends State<ProfilePage> {
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  Future<void> _loadStats() async {
+    try {
+      // Load clothing stats
+      final clothingStats = await ClosetService.getClothingStats();
+      _totalClothingItems = clothingStats['total_items'] ?? 0;
+
+      // Load saved inspirations count
+      final savedInspirations = await InspirationService.getSavedInspirations();
+      _savedInspirations = savedInspirations.length;
+
+      if (mounted) {
+        setState(() {});
+      }
+    } catch (e) {
+      // Error loading stats, keep defaults
+      if (mounted) {
+        setState(() {
+          _totalClothingItems = 0;
+          _savedInspirations = 0;
+        });
       }
     }
   }
@@ -270,6 +303,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     _buildProfileCard(),
                     const SizedBox(height: AppConstants.spacingXL),
                     _buildStatsCard(),
+                    const SizedBox(height: AppConstants.spacingXL),
+                    _buildSettingsCard(),
                     const SizedBox(height: AppConstants.spacingXL),
                     _buildSignOutButton(),
                   ],
@@ -712,7 +747,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: _buildStatItem(
                   icon: Icons.checkroom,
                   label: 'Items in Closet',
-                  value: '0', // TODO: Get actual count from closet
+                  value: _totalClothingItems.toString(),
                   color: AppConstants.primaryBlue,
                 ),
               ),
@@ -720,7 +755,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: _buildStatItem(
                   icon: Icons.favorite,
                   label: 'Saved Inspirations',
-                  value: '0', // TODO: Get actual count from saved inspirations
+                  value: _savedInspirations.toString(),
                   color: AppConstants.accentPink,
                 ),
               ),
@@ -764,6 +799,202 @@ class _ProfilePageState extends State<ProfilePage> {
               color: AppConstants.textDark.withValues(alpha: 0.6),
             ),
             textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSettingsCard() {
+    return Container(
+      padding: const EdgeInsets.all(AppConstants.spacingL),
+      decoration: BoxDecoration(
+        color: AppConstants.neutralWhite,
+        borderRadius: BorderRadius.circular(AppConstants.radiusL),
+        boxShadow: AppConstants.softShadow,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.settings_outlined,
+                color: AppConstants.accentGreen,
+                size: 24,
+              ),
+              const SizedBox(width: AppConstants.spacingM),
+              const Text(
+                'Settings & Preferences',
+                style: TextStyle(
+                  fontFamily: AppConstants.primaryFont,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: AppConstants.textDark,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppConstants.spacingL),
+          _buildSettingsItem(
+            icon: Icons.notifications_outlined,
+            title: 'Notifications',
+            subtitle: 'Manage your notification preferences',
+            onTap: () => _showNotificationSettings(),
+          ),
+          const SizedBox(height: AppConstants.spacingM),
+          _buildSettingsItem(
+            icon: Icons.privacy_tip_outlined,
+            title: 'Privacy & Data',
+            subtitle: 'Control your data and privacy settings',
+            onTap: () => _showPrivacySettings(),
+          ),
+          const SizedBox(height: AppConstants.spacingM),
+          _buildSettingsItem(
+            icon: Icons.help_outline,
+            title: 'Help & Support',
+            subtitle: 'Get help and contact support',
+            onTap: () => _showHelpSupport(),
+          ),
+          const SizedBox(height: AppConstants.spacingM),
+          _buildSettingsItem(
+            icon: Icons.info_outline,
+            title: 'About',
+            subtitle: 'App version and information',
+            onTap: () => _showAbout(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSettingsItem({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(AppConstants.radiusM),
+      child: Padding(
+        padding: const EdgeInsets.all(AppConstants.spacingM),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(AppConstants.spacingS),
+              decoration: BoxDecoration(
+                color: AppConstants.primaryBlue.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(AppConstants.radiusM),
+              ),
+              child: Icon(icon, color: AppConstants.primaryBlue, size: 20),
+            ),
+            const SizedBox(width: AppConstants.spacingM),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontFamily: AppConstants.primaryFont,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: AppConstants.textDark,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontFamily: AppConstants.secondaryFont,
+                      fontSize: 14,
+                      color: AppConstants.textDark.withValues(alpha: 0.6),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.chevron_right,
+              color: AppConstants.textDark.withValues(alpha: 0.4),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showNotificationSettings() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Notification Settings'),
+        content: const Text('Notification preferences coming soon! 🔔'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showPrivacySettings() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Privacy & Data'),
+        content: const Text('Privacy settings coming soon! 🔒'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showHelpSupport() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Help & Support'),
+        content: const Text('Help and support features coming soon! 🆘'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showAbout() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('About Closet Fairy'),
+        content: const Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Version: 1.0.0'),
+            SizedBox(height: 8),
+            Text(
+              'Closet Fairy helps you organize your wardrobe and discover your personal style.',
+            ),
+            SizedBox(height: 8),
+            Text('Built with Flutter and Supabase.'),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('OK'),
           ),
         ],
       ),

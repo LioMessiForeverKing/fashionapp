@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import '../services/auth_service.dart';
 import '../utils/constants.dart';
 import 'inspiration_feed_page.dart';
 import 'closet_page.dart';
 import 'upload_page.dart';
 import 'ai_fairy_page.dart';
+import 'profile_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -96,49 +96,6 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-// Placeholder pages for now
-
-class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          '👤 Profile',
-          style: TextStyle(
-            fontFamily: AppConstants.primaryFont,
-            fontSize: 24,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        backgroundColor: AppConstants.neutralWhite,
-        elevation: 0,
-        actions: [
-          IconButton(
-            onPressed: () async {
-              await AuthService.signOut();
-            },
-            icon: const Icon(Icons.logout),
-          ),
-        ],
-      ),
-      body: const Center(
-        child: Text(
-          'Profile & Settings\nComing Soon! 👤',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: AppConstants.secondaryFont,
-            fontSize: 18,
-            color: AppConstants.textDark,
-          ),
         ),
       ),
     );

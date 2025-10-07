@@ -1,7 +1,7 @@
 name: closet_fairy
 description: "Your personal AI-powered fashion assistant. Discover style inspiration, manage your digital closet, and get personalized outfit suggestions with the magic of AI."
 publish_to: 'none'
-version: 1.0.0+1
+version: 1.0.0+2
 
 environment:
   sdk: ^3.8.1

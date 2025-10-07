@@ -415,6 +415,9 @@ class _AIFairyPageState extends State<AIFairyPage>
           // Results
           if (_outfitSuggestions.isNotEmpty) _buildOutfitResults(),
           if (_styleAdvice.isNotEmpty) _buildStyleAdviceResult(),
+
+          // Quick Actions Section
+          _buildQuickActionsSection(),
         ],
       ),
     );
@@ -893,6 +896,196 @@ class _AIFairyPageState extends State<AIFairyPage>
     );
   }
 
+  Widget _buildQuickActionsSection() {
+    return Container(
+      padding: const EdgeInsets.all(AppConstants.spacingL),
+      decoration: BoxDecoration(
+        color: AppConstants.neutralWhite,
+        borderRadius: BorderRadius.circular(AppConstants.radiusL),
+        boxShadow: AppConstants.softShadow,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.flash_on, color: AppConstants.accentYellow, size: 24),
+              const SizedBox(width: AppConstants.spacingM),
+              const Text(
+                'Quick Actions',
+                style: TextStyle(
+                  fontFamily: AppConstants.primaryFont,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: AppConstants.textDark,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppConstants.spacingL),
+
+          // Quick action buttons
+          Wrap(
+            spacing: AppConstants.spacingM,
+            runSpacing: AppConstants.spacingM,
+            children: [
+              _buildQuickActionButton(
+                icon: Icons.wb_sunny,
+                label: 'Summer Outfits',
+                color: AppConstants.accentYellow,
+                onTap: () => _generateSeasonalOutfits('summer'),
+              ),
+              _buildQuickActionButton(
+                icon: Icons.ac_unit,
+                label: 'Winter Outfits',
+                color: AppConstants.primaryBlue,
+                onTap: () => _generateSeasonalOutfits('winter'),
+              ),
+              _buildQuickActionButton(
+                icon: Icons.work,
+                label: 'Work Outfits',
+                color: AppConstants.accentGreen,
+                onTap: () => _generateOccasionOutfits('work'),
+              ),
+              _buildQuickActionButton(
+                icon: Icons.favorite,
+                label: 'Date Night',
+                color: AppConstants.accentPink,
+                onTap: () => _generateOccasionOutfits('date-night'),
+              ),
+              _buildQuickActionButton(
+                icon: Icons.sports,
+                label: 'Casual',
+                color: AppConstants.accentCoral,
+                onTap: () => _generateOccasionOutfits('casual'),
+              ),
+              _buildQuickActionButton(
+                icon: Icons.celebration,
+                label: 'Party',
+                color: AppConstants.accentPink,
+                onTap: () => _generateOccasionOutfits('party'),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuickActionButton({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppConstants.spacingM,
+          vertical: AppConstants.spacingS,
+        ),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(AppConstants.radiusM),
+          border: Border.all(color: color.withValues(alpha: 0.3)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: color, size: 16),
+            const SizedBox(width: AppConstants.spacingS),
+            Text(
+              label,
+              style: TextStyle(
+                fontFamily: AppConstants.secondaryFont,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: color,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _generateSeasonalOutfits(String season) async {
+    setState(() => _isGeneratingOutfits = true);
+    HapticFeedback.lightImpact();
+
+    try {
+      final suggestions = await AIFairyService.generateSeasonalOutfits(
+        season: season,
+        closetItems: _closetItems,
+        userProfile: _userProfile,
+      );
+
+      setState(() {
+        _outfitSuggestions = suggestions;
+        _isGeneratingOutfits = false;
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('✨ ${season.capitalize()} outfits ready!'),
+            backgroundColor: AppConstants.accentGreen,
+          ),
+        );
+      }
+    } catch (e) {
+      setState(() => _isGeneratingOutfits = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to generate ${season} outfits: $e'),
+            backgroundColor: AppConstants.accentCoral,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _generateOccasionOutfits(String occasion) async {
+    setState(() => _isGeneratingOutfits = true);
+    HapticFeedback.lightImpact();
+
+    try {
+      final suggestions = await AIFairyService.generateOccasionOutfits(
+        occasion: occasion,
+        closetItems: _closetItems,
+        userProfile: _userProfile,
+      );
+
+      setState(() {
+        _outfitSuggestions = suggestions;
+        _isGeneratingOutfits = false;
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              '✨ ${occasion.replaceAll('-', ' ').capitalize()} outfits ready!',
+            ),
+            backgroundColor: AppConstants.accentGreen,
+          ),
+        );
+      }
+    } catch (e) {
+      setState(() => _isGeneratingOutfits = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to generate ${occasion} outfits: $e'),
+            backgroundColor: AppConstants.accentCoral,
+          ),
+        );
+      }
+    }
+  }
+
   IconData _getCategoryIcon(String? category) {
     switch (category?.toLowerCase()) {
       case 'tops':
@@ -910,5 +1103,11 @@ class _AIFairyPageState extends State<AIFairyPage>
       default:
         return Icons.checkroom;
     }
+  }
+}
+
+extension StringExtension on String {
+  String capitalize() {
+    return "${this[0].toUpperCase()}${substring(1)}";
   }
 }

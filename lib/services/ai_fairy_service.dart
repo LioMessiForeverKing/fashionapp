@@ -438,4 +438,312 @@ Remember, style is personal. Experiment with different combinations and find wha
       },
     ];
   }
+
+  // Generate seasonal outfit suggestions
+  static Future<List<Map<String, dynamic>>> generateSeasonalOutfits({
+    required String season,
+    required List<Map<String, dynamic>> closetItems,
+    Map<String, dynamic>? userProfile,
+  }) async {
+    try {
+      final prompt = _buildSeasonalPrompt(season, closetItems, userProfile);
+      final response = await _callGeminiAPI(prompt);
+
+      if (response != null) {
+        return _parseOutfitResponse(response);
+      }
+
+      return _getFallbackSeasonalSuggestions(season);
+    } catch (e) {
+      // Error generating seasonal outfits: $e
+      return _getFallbackSeasonalSuggestions(season);
+    }
+  }
+
+  // Generate occasion-based outfit suggestions
+  static Future<List<Map<String, dynamic>>> generateOccasionOutfits({
+    required String occasion,
+    required List<Map<String, dynamic>> closetItems,
+    Map<String, dynamic>? userProfile,
+  }) async {
+    try {
+      final prompt = _buildOccasionPrompt(occasion, closetItems, userProfile);
+      final response = await _callGeminiAPI(prompt);
+
+      if (response != null) {
+        return _parseOutfitResponse(response);
+      }
+
+      return _getFallbackOccasionSuggestions(occasion);
+    } catch (e) {
+      // Error generating occasion outfits: $e
+      return _getFallbackOccasionSuggestions(occasion);
+    }
+  }
+
+  // Build seasonal outfit prompt
+  static String _buildSeasonalPrompt(
+    String season,
+    List<Map<String, dynamic>> closetItems,
+    Map<String, dynamic>? userProfile,
+  ) {
+    final itemsText = closetItems
+        .map((item) {
+          return '${item['subcategory']} (${item['color']}, ${item['category']})';
+        })
+        .join(', ');
+
+    // Extract user profile information
+    final demographics = userProfile?['demographics'] as Map<String, dynamic>?;
+    final gender = demographics?['gender'] ?? 'not specified';
+    final bodyType = demographics?['body_type'] ?? 'not specified';
+    final stylePreferences =
+        userProfile?['style_preferences'] as List<dynamic>?;
+    final styleText = stylePreferences?.isNotEmpty == true
+        ? stylePreferences!.join(', ')
+        : 'not specified';
+
+    return '''
+You are a fashion AI assistant creating seasonal outfit suggestions.
+
+User's closet contains: $itemsText
+
+User Profile:
+- Gender: $gender
+- Body Type: $bodyType
+- Style Preferences: $styleText
+
+Season: $season
+
+Please suggest 3 different outfit combinations perfect for $season weather and activities. Consider:
+- Appropriate layering for $season temperatures
+- Seasonal colors and fabrics
+- $season-appropriate activities and occasions
+- User's style preferences and body type
+
+For each outfit, provide:
+1. A creative name for the outfit
+2. List of specific items to wear
+3. Brief styling tips
+4. Why this outfit works for $season
+
+Format your response as a JSON array with this structure:
+[
+  {
+    "name": "Outfit Name",
+    "items": ["item1", "item2", "item3"],
+    "tips": "Styling advice",
+    "reason": "Why this works for $season"
+  }
+]
+
+Make suggestions practical and achievable with their current wardrobe.
+''';
+  }
+
+  // Build occasion outfit prompt
+  static String _buildOccasionPrompt(
+    String occasion,
+    List<Map<String, dynamic>> closetItems,
+    Map<String, dynamic>? userProfile,
+  ) {
+    final itemsText = closetItems
+        .map((item) {
+          return '${item['subcategory']} (${item['color']}, ${item['category']})';
+        })
+        .join(', ');
+
+    // Extract user profile information
+    final demographics = userProfile?['demographics'] as Map<String, dynamic>?;
+    final gender = demographics?['gender'] ?? 'not specified';
+    final bodyType = demographics?['body_type'] ?? 'not specified';
+    final stylePreferences =
+        userProfile?['style_preferences'] as List<dynamic>?;
+    final styleText = stylePreferences?.isNotEmpty == true
+        ? stylePreferences!.join(', ')
+        : 'not specified';
+
+    return '''
+You are a fashion AI assistant creating occasion-specific outfit suggestions.
+
+User's closet contains: $itemsText
+
+User Profile:
+- Gender: $gender
+- Body Type: $bodyType
+- Style Preferences: $styleText
+
+Occasion: $occasion
+
+Please suggest 3 different outfit combinations perfect for $occasion. Consider:
+- Appropriate formality level for $occasion
+- Comfort and practicality for the event
+- User's style preferences and body type
+- Confidence-boosting combinations
+
+For each outfit, provide:
+1. A creative name for the outfit
+2. List of specific items to wear
+3. Brief styling tips
+4. Why this outfit works for $occasion
+
+Format your response as a JSON array with this structure:
+[
+  {
+    "name": "Outfit Name",
+    "items": ["item1", "item2", "item3"],
+    "tips": "Styling advice",
+    "reason": "Why this works for $occasion"
+  }
+]
+
+Make suggestions practical and achievable with their current wardrobe.
+''';
+  }
+
+  // Fallback seasonal suggestions
+  static List<Map<String, dynamic>> _getFallbackSeasonalSuggestions(
+    String season,
+  ) {
+    switch (season.toLowerCase()) {
+      case 'summer':
+        return [
+          {
+            'name': 'Summer Breeze',
+            'items': ['Light T-shirt', 'Shorts', 'Sandals'],
+            'tips': 'Keep it light and breezy for hot days',
+            'reason': 'Perfect for warm summer weather',
+          },
+          {
+            'name': 'Beach Ready',
+            'items': ['Tank Top', 'Linen Pants', 'Flip Flops'],
+            'tips': 'Comfortable and stylish for summer activities',
+            'reason': 'Great for casual summer outings',
+          },
+          {
+            'name': 'Summer Evening',
+            'items': ['Light Dress', 'Cardigan', 'Flats'],
+            'tips': 'Layer for cooler evening temperatures',
+            'reason': 'Versatile for day-to-evening transitions',
+          },
+        ];
+      case 'winter':
+        return [
+          {
+            'name': 'Cozy Winter',
+            'items': ['Sweater', 'Jeans', 'Boots'],
+            'tips': 'Layer with a warm jacket for extra warmth',
+            'reason': 'Classic winter comfort and style',
+          },
+          {
+            'name': 'Winter Chic',
+            'items': ['Turtleneck', 'Wool Pants', 'Ankle Boots'],
+            'tips': 'Add a statement coat for extra style',
+            'reason': 'Sophisticated winter look',
+          },
+          {
+            'name': 'Snow Day',
+            'items': ['Thermal Top', 'Fleece Pants', 'Snow Boots'],
+            'tips': 'Perfect for snowy weather activities',
+            'reason': 'Practical and warm for winter adventures',
+          },
+        ];
+      default:
+        return _getFallbackSuggestions();
+    }
+  }
+
+  // Fallback occasion suggestions
+  static List<Map<String, dynamic>> _getFallbackOccasionSuggestions(
+    String occasion,
+  ) {
+    switch (occasion.toLowerCase()) {
+      case 'work':
+        return [
+          {
+            'name': 'Professional Classic',
+            'items': ['Blouse', 'Trousers', 'Heels'],
+            'tips': 'Keep accessories minimal and professional',
+            'reason': 'Perfect for office environments',
+          },
+          {
+            'name': 'Business Casual',
+            'items': ['Button-up Shirt', 'Chinos', 'Loafers'],
+            'tips': 'Comfortable yet polished for work',
+            'reason': 'Great for casual office days',
+          },
+          {
+            'name': 'Smart Professional',
+            'items': ['Blazer', 'Dress', 'Pumps'],
+            'tips': 'Add a statement necklace for personality',
+            'reason': 'Ideal for important meetings',
+          },
+        ];
+      case 'date-night':
+        return [
+          {
+            'name': 'Romantic Evening',
+            'items': ['Little Black Dress', 'Heels', 'Statement Jewelry'],
+            'tips': 'Keep makeup elegant and accessories minimal',
+            'reason': 'Classic and timeless for special evenings',
+          },
+          {
+            'name': 'Casual Date',
+            'items': ['Nice Top', 'Dark Jeans', 'Boots'],
+            'tips': 'Add a leather jacket for extra style',
+            'reason': 'Comfortable yet stylish for casual dates',
+          },
+          {
+            'name': 'Dinner Date',
+            'items': ['Silk Blouse', 'Midi Skirt', 'Heels'],
+            'tips': 'Choose colors that complement your skin tone',
+            'reason': 'Perfect for dinner and drinks',
+          },
+        ];
+      case 'casual':
+        return [
+          {
+            'name': 'Weekend Vibes',
+            'items': ['Hoodie', 'Joggers', 'Sneakers'],
+            'tips': 'Perfect for running errands or relaxing',
+            'reason': 'Maximum comfort for casual days',
+          },
+          {
+            'name': 'Coffee Shop',
+            'items': ['Sweater', 'Jeans', 'Ankle Boots'],
+            'tips': 'Add a scarf for extra style',
+            'reason': 'Comfortable yet put-together',
+          },
+          {
+            'name': 'Brunch Ready',
+            'items': ['T-shirt', 'Midi Skirt', 'Flats'],
+            'tips': 'Accessorize with a cute bag',
+            'reason': 'Perfect for weekend brunch dates',
+          },
+        ];
+      case 'party':
+        return [
+          {
+            'name': 'Party Glam',
+            'items': ['Sequin Top', 'Black Pants', 'Heels'],
+            'tips': 'Add bold makeup and statement jewelry',
+            'reason': 'Perfect for dancing and celebrating',
+          },
+          {
+            'name': 'Cocktail Party',
+            'items': ['Cocktail Dress', 'Heels', 'Clutch'],
+            'tips': 'Keep accessories elegant and minimal',
+            'reason': 'Ideal for sophisticated gatherings',
+          },
+          {
+            'name': 'House Party',
+            'items': ['Fun Top', 'Jeans', 'Boots'],
+            'tips': 'Add a leather jacket for edge',
+            'reason': 'Comfortable yet stylish for house parties',
+          },
+        ];
+      default:
+        return _getFallbackSuggestions();
+    }
+  }
 }

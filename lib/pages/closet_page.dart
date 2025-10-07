@@ -923,22 +923,818 @@ class _ClosetPageState extends State<ClosetPage> with TickerProviderStateMixin {
   }
 
   void _showItemDetail(Map<String, dynamic> item) {
-    // TODO: Implement item detail modal
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('${item['subcategory']} - Detail view coming soon!'),
-        backgroundColor: AppConstants.primaryBlue,
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => _buildItemDetailModal(item),
+    );
+  }
+
+  Widget _buildItemDetailModal(Map<String, dynamic> item) {
+    final isFavorite = item['is_favorite'] as bool? ?? false;
+
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.85,
+      decoration: const BoxDecoration(
+        color: AppConstants.neutralWhite,
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(AppConstants.radiusXL),
+        ),
+      ),
+      child: Column(
+        children: [
+          // Handle bar
+          Container(
+            margin: const EdgeInsets.only(top: AppConstants.spacingM),
+            width: 40,
+            height: 4,
+            decoration: BoxDecoration(
+              color: AppConstants.textDark.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+
+          // Header
+          Padding(
+            padding: const EdgeInsets.all(AppConstants.spacingL),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    item['subcategory'] ?? 'Clothing Item',
+                    style: const TextStyle(
+                      fontFamily: AppConstants.primaryFont,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      color: AppConstants.textDark,
+                    ),
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => _toggleFavorite(item['id'], isFavorite),
+                  icon: Icon(
+                    isFavorite ? Icons.favorite : Icons.favorite_border,
+                    color: isFavorite
+                        ? AppConstants.accentCoral
+                        : AppConstants.textDark,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  icon: const Icon(Icons.close),
+                ),
+              ],
+            ),
+          ),
+
+          // Content
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppConstants.spacingL,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Image
+                  if (item['image_url'] != null &&
+                      item['image_url'].toString().isNotEmpty)
+                    Container(
+                      width: double.infinity,
+                      height: 300,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(
+                          AppConstants.radiusL,
+                        ),
+                        boxShadow: AppConstants.softShadow,
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(
+                          AppConstants.radiusL,
+                        ),
+                        child: Image.network(
+                          item['image_url'],
+                          fit: BoxFit.cover,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Container(
+                              color: AppConstants.neutralGray,
+                              child: const Center(
+                                child: CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    AppConstants.primaryBlue,
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              color: AppConstants.neutralGray,
+                              child: const Center(
+                                child: Icon(
+                                  Icons.checkroom,
+                                  size: 64,
+                                  color: AppConstants.textDark,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    )
+                  else
+                    Container(
+                      width: double.infinity,
+                      height: 300,
+                      decoration: BoxDecoration(
+                        color: AppConstants.neutralGray,
+                        borderRadius: BorderRadius.circular(
+                          AppConstants.radiusL,
+                        ),
+                      ),
+                      child: const Center(
+                        child: Icon(
+                          Icons.checkroom,
+                          size: 64,
+                          color: AppConstants.textDark,
+                        ),
+                      ),
+                    ),
+
+                  const SizedBox(height: AppConstants.spacingL),
+
+                  // Basic Info
+                  _buildDetailSection('Basic Information', [
+                    _buildDetailItem(
+                      'Category',
+                      item['category']?.toString().toUpperCase() ?? 'N/A',
+                    ),
+                    _buildDetailItem(
+                      'Subcategory',
+                      item['subcategory'] ?? 'N/A',
+                    ),
+                    _buildDetailItem('Brand', item['brand'] ?? 'N/A'),
+                    _buildDetailItem('Size', item['size'] ?? 'N/A'),
+                  ]),
+
+                  const SizedBox(height: AppConstants.spacingL),
+
+                  // Style Details
+                  _buildDetailSection('Style Details', [
+                    _buildDetailItem(
+                      'Color',
+                      item['color']?.toString().toUpperCase() ?? 'N/A',
+                    ),
+                    _buildDetailItem(
+                      'Pattern',
+                      item['pattern']?.toString().toUpperCase() ?? 'N/A',
+                    ),
+                    _buildDetailItem(
+                      'Fabric',
+                      item['fabric']?.toString().toUpperCase() ?? 'N/A',
+                    ),
+                    _buildDetailItem(
+                      'Season',
+                      item['season']?.toString().toUpperCase() ?? 'N/A',
+                    ),
+                    _buildDetailItem(
+                      'Formality',
+                      item['formality']?.toString().toUpperCase() ?? 'N/A',
+                    ),
+                  ]),
+
+                  const SizedBox(height: AppConstants.spacingL),
+
+                  // Purchase Info
+                  if (item['purchase_date'] != null ||
+                      item['purchase_price'] != null)
+                    _buildDetailSection('Purchase Information', [
+                      if (item['purchase_date'] != null)
+                        _buildDetailItem(
+                          'Purchase Date',
+                          item['purchase_date'],
+                        ),
+                      if (item['purchase_price'] != null)
+                        _buildDetailItem(
+                          'Purchase Price',
+                          '\$${item['purchase_price']}',
+                        ),
+                    ]),
+
+                  const SizedBox(height: AppConstants.spacingL),
+
+                  // Tags
+                  if (item['tags'] != null && (item['tags'] as List).isNotEmpty)
+                    _buildTagsSection(item['tags'] as List<dynamic>),
+
+                  const SizedBox(height: AppConstants.spacingL),
+
+                  // Notes
+                  if (item['notes'] != null &&
+                      item['notes'].toString().isNotEmpty)
+                    _buildNotesSection(item['notes']),
+
+                  const SizedBox(height: AppConstants.spacingXL),
+                ],
+              ),
+            ),
+          ),
+
+          // Action buttons
+          Container(
+            padding: const EdgeInsets.all(AppConstants.spacingL),
+            decoration: BoxDecoration(
+              color: AppConstants.neutralWhite,
+              border: Border(
+                top: BorderSide(
+                  color: AppConstants.neutralGray.withValues(alpha: 0.3),
+                ),
+              ),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      // TODO: Implement edit functionality
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Edit functionality coming soon! ✏️'),
+                          backgroundColor: AppConstants.accentGreen,
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.edit),
+                    label: const Text('Edit'),
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: AppConstants.primaryBlue),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                          AppConstants.radiusL,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: AppConstants.spacingM),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      _deleteItem(item['id']);
+                    },
+                    icon: const Icon(Icons.delete),
+                    label: const Text('Delete'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppConstants.accentCoral,
+                      foregroundColor: AppConstants.neutralWhite,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                          AppConstants.radiusL,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  void _showFilterModal() {
-    // TODO: Implement filter modal
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Filter modal coming soon! 🔍'),
-        backgroundColor: AppConstants.accentGreen,
+  Widget _buildDetailSection(String title, List<Widget> items) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            fontFamily: AppConstants.primaryFont,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: AppConstants.textDark,
+          ),
+        ),
+        const SizedBox(height: AppConstants.spacingM),
+        Container(
+          padding: const EdgeInsets.all(AppConstants.spacingL),
+          decoration: BoxDecoration(
+            color: AppConstants.neutralGray.withValues(alpha: 0.3),
+            borderRadius: BorderRadius.circular(AppConstants.radiusL),
+          ),
+          child: Column(children: items),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDetailItem(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppConstants.spacingS),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 100,
+            child: Text(
+              label,
+              style: TextStyle(
+                fontFamily: AppConstants.secondaryFont,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: AppConstants.textDark.withValues(alpha: 0.7),
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: const TextStyle(
+                fontFamily: AppConstants.secondaryFont,
+                fontSize: 14,
+                color: AppConstants.textDark,
+              ),
+            ),
+          ),
+        ],
       ),
+    );
+  }
+
+  Widget _buildTagsSection(List<dynamic> tags) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Tags',
+          style: TextStyle(
+            fontFamily: AppConstants.primaryFont,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: AppConstants.textDark,
+          ),
+        ),
+        const SizedBox(height: AppConstants.spacingM),
+        Wrap(
+          spacing: AppConstants.spacingS,
+          runSpacing: AppConstants.spacingS,
+          children: tags.map((tag) {
+            return Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppConstants.spacingM,
+                vertical: AppConstants.spacingS,
+              ),
+              decoration: BoxDecoration(
+                color: AppConstants.primaryBlue.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(AppConstants.radiusM),
+                border: Border.all(
+                  color: AppConstants.primaryBlue.withValues(alpha: 0.3),
+                ),
+              ),
+              child: Text(
+                tag.toString().toUpperCase(),
+                style: const TextStyle(
+                  fontFamily: AppConstants.secondaryFont,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: AppConstants.primaryBlue,
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNotesSection(String notes) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Notes',
+          style: TextStyle(
+            fontFamily: AppConstants.primaryFont,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: AppConstants.textDark,
+          ),
+        ),
+        const SizedBox(height: AppConstants.spacingM),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(AppConstants.spacingL),
+          decoration: BoxDecoration(
+            color: AppConstants.neutralGray.withValues(alpha: 0.3),
+            borderRadius: BorderRadius.circular(AppConstants.radiusL),
+          ),
+          child: Text(
+            notes,
+            style: const TextStyle(
+              fontFamily: AppConstants.secondaryFont,
+              fontSize: 14,
+              color: AppConstants.textDark,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _deleteItem(String itemId) async {
+    final shouldDelete = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Item'),
+        content: const Text(
+          'Are you sure you want to delete this item? This action cannot be undone.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: TextButton.styleFrom(
+              foregroundColor: AppConstants.accentCoral,
+            ),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldDelete == true) {
+      try {
+        await ClosetService.deleteClothingItem(itemId);
+
+        // Remove from local state
+        setState(() {
+          _clothingItems.removeWhere((item) => item['id'] == itemId);
+          _filteredItems.removeWhere((item) => item['id'] == itemId);
+        });
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Item deleted successfully'),
+              backgroundColor: AppConstants.accentGreen,
+            ),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Failed to delete item: $e'),
+              backgroundColor: AppConstants.accentCoral,
+            ),
+          );
+        }
+      }
+    }
+  }
+
+  void _showFilterModal() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => _buildFilterModal(),
+    );
+  }
+
+  Widget _buildFilterModal() {
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.8,
+      decoration: const BoxDecoration(
+        color: AppConstants.neutralWhite,
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(AppConstants.radiusXL),
+        ),
+      ),
+      child: Column(
+        children: [
+          // Handle bar
+          Container(
+            margin: const EdgeInsets.only(top: AppConstants.spacingM),
+            width: 40,
+            height: 4,
+            decoration: BoxDecoration(
+              color: AppConstants.textDark.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+
+          // Header
+          Padding(
+            padding: const EdgeInsets.all(AppConstants.spacingL),
+            child: Row(
+              children: [
+                const Text(
+                  'Filter Items',
+                  style: TextStyle(
+                    fontFamily: AppConstants.primaryFont,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: AppConstants.textDark,
+                  ),
+                ),
+                const Spacer(),
+                TextButton(
+                  onPressed: _clearFilters,
+                  child: const Text(
+                    'Clear All',
+                    style: TextStyle(
+                      fontFamily: AppConstants.secondaryFont,
+                      color: AppConstants.primaryBlue,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Filter content
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppConstants.spacingL,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Category filter
+                  _buildFilterSection(
+                    'Category',
+                    _selectedCategory,
+                    ClosetService.getFilterOptions()['categories']!,
+                    (value) => setState(() => _selectedCategory = value),
+                  ),
+
+                  const SizedBox(height: AppConstants.spacingL),
+
+                  // Color filter
+                  _buildMultiSelectFilterSection(
+                    'Colors',
+                    _selectedColors,
+                    ClosetService.getFilterOptions()['colors']!,
+                    (colors) => setState(() => _selectedColors = colors),
+                  ),
+
+                  const SizedBox(height: AppConstants.spacingL),
+
+                  // Season filter
+                  _buildFilterSection(
+                    'Season',
+                    _selectedSeason,
+                    ClosetService.getFilterOptions()['seasons']!,
+                    (value) => setState(() => _selectedSeason = value),
+                  ),
+
+                  const SizedBox(height: AppConstants.spacingL),
+
+                  // Formality filter
+                  _buildFilterSection(
+                    'Formality',
+                    _selectedFormality,
+                    ClosetService.getFilterOptions()['formality']!,
+                    (value) => setState(() => _selectedFormality = value),
+                  ),
+
+                  const SizedBox(height: AppConstants.spacingL),
+
+                  // Favorites filter
+                  _buildFavoritesFilter(),
+
+                  const SizedBox(height: AppConstants.spacingXL),
+                ],
+              ),
+            ),
+          ),
+
+          // Apply button
+          Container(
+            padding: const EdgeInsets.all(AppConstants.spacingL),
+            decoration: BoxDecoration(
+              color: AppConstants.neutralWhite,
+              border: Border(
+                top: BorderSide(
+                  color: AppConstants.neutralGray.withValues(alpha: 0.3),
+                ),
+              ),
+            ),
+            child: SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  _applyFilters();
+                  Navigator.pop(context);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppConstants.primaryBlue,
+                  foregroundColor: AppConstants.neutralWhite,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppConstants.radiusL),
+                  ),
+                ),
+                child: const Text(
+                  'Apply Filters',
+                  style: TextStyle(
+                    fontFamily: AppConstants.secondaryFont,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFilterSection(
+    String title,
+    String? selectedValue,
+    List<String> options,
+    void Function(String?) onChanged,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            fontFamily: AppConstants.primaryFont,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: AppConstants.textDark,
+          ),
+        ),
+        const SizedBox(height: AppConstants.spacingM),
+        DropdownButtonFormField<String>(
+          value: selectedValue,
+          onChanged: onChanged,
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: AppConstants.neutralGray,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(AppConstants.radiusM),
+              borderSide: BorderSide.none,
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: AppConstants.spacingM,
+              vertical: AppConstants.spacingM,
+            ),
+          ),
+          style: const TextStyle(
+            fontFamily: AppConstants.secondaryFont,
+            color: AppConstants.textDark,
+          ),
+          items: [
+            DropdownMenuItem<String>(
+              value: null,
+              child: Text(
+                'All ${title.toLowerCase()}',
+                style: const TextStyle(
+                  fontFamily: AppConstants.secondaryFont,
+                  color: AppConstants.textDark,
+                ),
+              ),
+            ),
+            ...options.map((option) {
+              return DropdownMenuItem<String>(
+                value: option,
+                child: Text(
+                  option.toUpperCase(),
+                  style: const TextStyle(
+                    fontFamily: AppConstants.secondaryFont,
+                  ),
+                ),
+              );
+            }),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMultiSelectFilterSection(
+    String title,
+    List<String> selectedValues,
+    List<String> options,
+    void Function(List<String>) onChanged,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            fontFamily: AppConstants.primaryFont,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: AppConstants.textDark,
+          ),
+        ),
+        const SizedBox(height: AppConstants.spacingM),
+        Wrap(
+          spacing: AppConstants.spacingS,
+          runSpacing: AppConstants.spacingS,
+          children: options.map((option) {
+            final isSelected = selectedValues.contains(option);
+            return FilterChip(
+              label: Text(
+                option.toUpperCase(),
+                style: TextStyle(
+                  fontFamily: AppConstants.secondaryFont,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: isSelected
+                      ? AppConstants.neutralWhite
+                      : AppConstants.primaryBlue,
+                ),
+              ),
+              selected: isSelected,
+              onSelected: (selected) {
+                final newValues = List<String>.from(selectedValues);
+                if (selected) {
+                  newValues.add(option);
+                } else {
+                  newValues.remove(option);
+                }
+                onChanged(newValues);
+              },
+              backgroundColor: AppConstants.neutralGray,
+              selectedColor: AppConstants.primaryBlue,
+              checkmarkColor: AppConstants.neutralWhite,
+              side: BorderSide(
+                color: isSelected
+                    ? AppConstants.primaryBlue
+                    : AppConstants.neutralGray,
+              ),
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFavoritesFilter() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Show Only',
+          style: TextStyle(
+            fontFamily: AppConstants.primaryFont,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: AppConstants.textDark,
+          ),
+        ),
+        const SizedBox(height: AppConstants.spacingM),
+        Row(
+          children: [
+            Expanded(
+              child: FilterChip(
+                label: const Text(
+                  'FAVORITES',
+                  style: TextStyle(
+                    fontFamily: AppConstants.secondaryFont,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: AppConstants.textDark,
+                  ),
+                ),
+                selected: _showFavoritesOnly == true,
+                onSelected: (selected) {
+                  setState(() {
+                    _showFavoritesOnly = selected ? true : null;
+                  });
+                },
+                backgroundColor: AppConstants.neutralGray,
+                selectedColor: AppConstants.accentPink,
+                checkmarkColor: AppConstants.neutralWhite,
+                side: BorderSide(
+                  color: _showFavoritesOnly == true
+                      ? AppConstants.accentPink
+                      : AppConstants.neutralGray,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
