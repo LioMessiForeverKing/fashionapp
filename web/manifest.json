@@ -1,11 +1,11 @@
 {
-    "name": "takeapp",
-    "short_name": "takeapp",
+    "name": "Closet Fairy",
+    "short_name": "Closet Fairy",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#E6F3FF",
+    "theme_color": "#E6F3FF",
+    "description": "Your personal AI-powered fashion assistant. Discover style inspiration, manage your digital closet, and get personalized outfit suggestions with the magic of AI.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

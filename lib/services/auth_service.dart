@@ -46,7 +46,7 @@ class AuthService {
     try {
       await UserService.createBasicUserRecord();
     } catch (e) {
-      print('Error creating basic user record after sign in: $e');
+      // Error creating basic user record after sign in: $e
       // Don't throw here as sign in was successful
     }
   }

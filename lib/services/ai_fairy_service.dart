@@ -23,7 +23,7 @@ class AIFairyService {
 
       return _getFallbackSuggestions();
     } catch (e) {
-      print('Error generating outfit suggestions: $e');
+      // Error generating outfit suggestions: $e
       return _getFallbackSuggestions();
     }
   }
@@ -43,7 +43,7 @@ class AIFairyService {
 
       return _getFallbackStyleAdvice();
     } catch (e) {
-      print('Error generating style advice: $e');
+      // Error generating style advice: $e
       return _getFallbackStyleAdvice();
     }
   }
@@ -52,6 +52,7 @@ class AIFairyService {
   static Future<List<Map<String, dynamic>>> generateItemBasedOutfits({
     required Map<String, dynamic> selectedItem,
     required List<Map<String, dynamic>> closetItems,
+    Map<String, dynamic>? userProfile,
     String? occasion,
     String? weather,
     String? mood,
@@ -60,6 +61,7 @@ class AIFairyService {
       final prompt = _buildItemBasedPrompt(
         selectedItem,
         closetItems,
+        userProfile,
         occasion,
         weather,
         mood,
@@ -72,7 +74,7 @@ class AIFairyService {
 
       return _getFallbackItemBasedSuggestions(selectedItem);
     } catch (e) {
-      print('Error generating item-based outfit suggestions: $e');
+      // Error generating item-based outfit suggestions: $e
       return _getFallbackItemBasedSuggestions(selectedItem);
     }
   }
@@ -80,9 +82,10 @@ class AIFairyService {
   // Generate random surprise outfits
   static Future<List<Map<String, dynamic>>> generateSurpriseOutfits({
     required List<Map<String, dynamic>> closetItems,
+    Map<String, dynamic>? userProfile,
   }) async {
     try {
-      final prompt = _buildSurprisePrompt(closetItems);
+      final prompt = _buildSurprisePrompt(closetItems, userProfile);
       final response = await _callGeminiAPI(prompt);
 
       if (response != null) {
@@ -91,7 +94,7 @@ class AIFairyService {
 
       return _getFallbackSurpriseSuggestions();
     } catch (e) {
-      print('Error generating surprise outfits: $e');
+      // Error generating surprise outfits: $e
       return _getFallbackSurpriseSuggestions();
     }
   }
@@ -171,6 +174,7 @@ Keep the response conversational and under 200 words.
   static String _buildItemBasedPrompt(
     Map<String, dynamic> selectedItem,
     List<Map<String, dynamic>> closetItems,
+    Map<String, dynamic>? userProfile,
     String? occasion,
     String? weather,
     String? mood,
@@ -184,12 +188,27 @@ Keep the response conversational and under 200 words.
     final selectedItemText =
         '${selectedItem['subcategory']} (${selectedItem['color']}, ${selectedItem['category']})';
 
+    // Extract user profile information
+    final demographics = userProfile?['demographics'] as Map<String, dynamic>?;
+    final gender = demographics?['gender'] ?? 'not specified';
+    final bodyType = demographics?['body_type'] ?? 'not specified';
+    final stylePreferences =
+        userProfile?['style_preferences'] as List<dynamic>?;
+    final styleText = stylePreferences?.isNotEmpty == true
+        ? stylePreferences!.join(', ')
+        : 'not specified';
+
     return '''
 You are a fashion AI assistant helping create outfit suggestions based on a specific item.
 
 User wants to wear: $selectedItemText
 
 Their closet contains: $itemsText
+
+User Profile:
+- Gender: $gender
+- Body Type: $bodyType
+- Style Preferences: $styleText
 
 Context:
 - Occasion: ${occasion ?? 'casual day'}
@@ -217,19 +236,37 @@ Make sure the selected item is included in each outfit suggestion.
   }
 
   // Build surprise outfit prompt
-  static String _buildSurprisePrompt(List<Map<String, dynamic>> closetItems) {
+  static String _buildSurprisePrompt(
+    List<Map<String, dynamic>> closetItems,
+    Map<String, dynamic>? userProfile,
+  ) {
     final itemsText = closetItems
         .map((item) {
           return '${item['subcategory']} (${item['color']}, ${item['category']})';
         })
         .join(', ');
 
+    // Extract user profile information
+    final demographics = userProfile?['demographics'] as Map<String, dynamic>?;
+    final gender = demographics?['gender'] ?? 'not specified';
+    final bodyType = demographics?['body_type'] ?? 'not specified';
+    final stylePreferences =
+        userProfile?['style_preferences'] as List<dynamic>?;
+    final styleText = stylePreferences?.isNotEmpty == true
+        ? stylePreferences!.join(', ')
+        : 'not specified';
+
     return '''
 You are a fashion AI assistant creating surprise outfit combinations.
 
 User's closet contains: $itemsText
 
-Create 3 completely random, creative, and unexpected outfit combinations from their wardrobe. Be bold and experimental! Mix different styles, colors, and categories in fun ways. For each outfit, provide:
+User Profile:
+- Gender: $gender
+- Body Type: $bodyType
+- Style Preferences: $styleText
+
+Create 3 completely random, creative, and unexpected outfit combinations from their wardrobe. Be bold and experimental! Mix different styles, colors, and categories in fun ways. Consider their gender and body type for appropriate fits. For each outfit, provide:
 1. A fun, creative name for the outfit
 2. List of specific items to wear
 3. Brief styling tips
@@ -279,11 +316,11 @@ Be creative and don't be afraid to suggest bold combinations!
         final data = jsonDecode(response.body);
         return data['candidates'][0]['content']['parts'][0]['text'];
       } else {
-        print('Gemini API error: ${response.statusCode} - ${response.body}');
+        // Gemini API error: ${response.statusCode} - ${response.body}
         return null;
       }
     } catch (e) {
-      print('Error calling Gemini API: $e');
+      // Error calling Gemini API: $e
       return null;
     }
   }
@@ -299,7 +336,7 @@ Be creative and don't be afraid to suggest bold combinations!
         return outfits.cast<Map<String, dynamic>>();
       }
     } catch (e) {
-      print('Error parsing outfit response: $e');
+      // Error parsing outfit response: $e
     }
 
     return _getFallbackSuggestions();

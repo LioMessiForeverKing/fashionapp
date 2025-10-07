@@ -91,7 +91,7 @@ class ClosetService {
 
       return items;
     } catch (e) {
-      print('Error fetching clothing items: $e');
+      // Error fetching clothing items: $e
       throw Exception('Failed to fetch clothing items: $e');
     }
   }
@@ -145,7 +145,7 @@ class ClosetService {
 
       return response;
     } catch (e) {
-      print('Error adding clothing item: $e');
+      // Error adding clothing item: $e
       throw Exception('Failed to add clothing item: $e');
     }
   }
@@ -189,10 +189,11 @@ class ClosetService {
       if (season != null) updateData['season'] = season;
       if (formality != null) updateData['formality'] = formality;
       if (isFavorite != null) updateData['is_favorite'] = isFavorite;
-      if (purchaseDate != null)
+      if (purchaseDate != null) {
         updateData['purchase_date'] = purchaseDate.toIso8601String().split(
           'T',
         )[0];
+      }
       if (purchasePrice != null) updateData['purchase_price'] = purchasePrice;
       if (notes != null) updateData['notes'] = notes;
 
@@ -206,7 +207,7 @@ class ClosetService {
 
       return response;
     } catch (e) {
-      print('Error updating clothing item: $e');
+      // Error updating clothing item: $e
       throw Exception('Failed to update clothing item: $e');
     }
   }
@@ -223,7 +224,7 @@ class ClosetService {
           .eq('id', itemId)
           .eq('user_id', user.id);
     } catch (e) {
-      print('Error deleting clothing item: $e');
+      // Error deleting clothing item: $e
       throw Exception('Failed to delete clothing item: $e');
     }
   }
@@ -243,7 +244,7 @@ class ClosetService {
           .eq('id', itemId)
           .eq('user_id', user.id);
     } catch (e) {
-      print('Error toggling favorite: $e');
+      // Error toggling favorite: $e
       throw Exception('Failed to toggle favorite: $e');
     }
   }
@@ -263,7 +264,7 @@ class ClosetService {
 
       return response;
     } catch (e) {
-      print('Error fetching clothing item: $e');
+      // Error fetching clothing item: $e
       return null;
     }
   }
@@ -298,7 +299,7 @@ class ClosetService {
 
       return stats;
     } catch (e) {
-      print('Error fetching clothing stats: $e');
+      // Error fetching clothing stats: $e
       return {
         'total_items': 0,
         'favorite_items': 0,

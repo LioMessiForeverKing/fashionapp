@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import '../utils/constants.dart';
 import '../services/ai_fairy_service.dart';
 import '../services/closet_service.dart';
+import '../services/user_service.dart';
 
 class AIFairyPage extends StatefulWidget {
   const AIFairyPage({super.key});
@@ -19,6 +20,7 @@ class _AIFairyPageState extends State<AIFairyPage>
   List<Map<String, dynamic>> _closetItems = [];
   List<Map<String, dynamic>> _outfitSuggestions = [];
   String _styleAdvice = '';
+  Map<String, dynamic>? _userProfile;
   bool _isLoading = false;
   bool _isGeneratingOutfits = false;
   bool _isGeneratingAdvice = false;
@@ -38,6 +40,7 @@ class _AIFairyPageState extends State<AIFairyPage>
     super.initState();
     _initializeAnimations();
     _loadClosetItems();
+    _loadUserProfile();
   }
 
   void _initializeAnimations() {
@@ -91,6 +94,18 @@ class _AIFairyPageState extends State<AIFairyPage>
           ),
         );
       }
+    }
+  }
+
+  Future<void> _loadUserProfile() async {
+    try {
+      final profile = await UserService.getUserProfile();
+      setState(() {
+        _userProfile = profile;
+      });
+    } catch (e) {
+      // User profile loading is not critical, continue without it
+      // Error loading user profile: $e
     }
   }
 
@@ -158,6 +173,7 @@ class _AIFairyPageState extends State<AIFairyPage>
       final suggestions = await AIFairyService.generateItemBasedOutfits(
         selectedItem: _selectedItem!,
         closetItems: _closetItems,
+        userProfile: _userProfile,
       );
 
       setState(() {
@@ -193,6 +209,7 @@ class _AIFairyPageState extends State<AIFairyPage>
     try {
       final suggestions = await AIFairyService.generateSurpriseOutfits(
         closetItems: _closetItems,
+        userProfile: _userProfile,
       );
 
       setState(() {
@@ -325,7 +342,7 @@ class _AIFairyPageState extends State<AIFairyPage>
             Icon(
               Icons.checkroom,
               size: 80,
-              color: AppConstants.textDark.withOpacity(0.3),
+              color: AppConstants.textDark.withValues(alpha: 0.3),
             ),
             const SizedBox(height: AppConstants.spacingL),
             const Text(
@@ -344,7 +361,7 @@ class _AIFairyPageState extends State<AIFairyPage>
               style: TextStyle(
                 fontFamily: AppConstants.secondaryFont,
                 fontSize: 16,
-                color: AppConstants.textDark.withOpacity(0.6),
+                color: AppConstants.textDark.withValues(alpha: 0.6),
               ),
             ),
             const SizedBox(height: AppConstants.spacingXL),
@@ -457,13 +474,13 @@ class _AIFairyPageState extends State<AIFairyPage>
                     margin: const EdgeInsets.only(right: AppConstants.spacingM),
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? AppConstants.accentPink.withOpacity(0.2)
+                          ? AppConstants.accentPink.withValues(alpha: 0.2)
                           : AppConstants.neutralGray,
                       borderRadius: BorderRadius.circular(AppConstants.radiusM),
                       border: Border.all(
                         color: isSelected
                             ? AppConstants.accentPink
-                            : AppConstants.primaryBlue.withOpacity(0.3),
+                            : AppConstants.primaryBlue.withValues(alpha: 0.3),
                         width: isSelected ? 2 : 1,
                       ),
                     ),
@@ -548,9 +565,11 @@ class _AIFairyPageState extends State<AIFairyPage>
     return Container(
       padding: const EdgeInsets.all(AppConstants.spacingM),
       decoration: BoxDecoration(
-        color: AppConstants.accentPink.withOpacity(0.1),
+        color: AppConstants.accentPink.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(AppConstants.radiusM),
-        border: Border.all(color: AppConstants.accentPink.withOpacity(0.3)),
+        border: Border.all(
+          color: AppConstants.accentPink.withValues(alpha: 0.3),
+        ),
       ),
       child: Row(
         children: [
@@ -578,7 +597,7 @@ class _AIFairyPageState extends State<AIFairyPage>
                   style: TextStyle(
                     fontFamily: AppConstants.secondaryFont,
                     fontSize: 12,
-                    color: AppConstants.textDark.withOpacity(0.6),
+                    color: AppConstants.textDark.withValues(alpha: 0.6),
                   ),
                 ),
               ],
@@ -637,7 +656,7 @@ class _AIFairyPageState extends State<AIFairyPage>
             style: TextStyle(
               fontFamily: AppConstants.secondaryFont,
               fontSize: 14,
-              color: AppConstants.textDark.withOpacity(0.6),
+              color: AppConstants.textDark.withValues(alpha: 0.6),
             ),
           ),
           const SizedBox(height: AppConstants.spacingL),
@@ -712,12 +731,12 @@ class _AIFairyPageState extends State<AIFairyPage>
             decoration: InputDecoration(
               hintText: 'Ask me anything about style...',
               hintStyle: TextStyle(
-                color: AppConstants.textDark.withOpacity(0.5),
+                color: AppConstants.textDark.withValues(alpha: 0.5),
               ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(AppConstants.radiusM),
                 borderSide: BorderSide(
-                  color: AppConstants.primaryBlue.withOpacity(0.3),
+                  color: AppConstants.primaryBlue.withValues(alpha: 0.3),
                 ),
               ),
               focusedBorder: OutlineInputBorder(
@@ -797,9 +816,11 @@ class _AIFairyPageState extends State<AIFairyPage>
       margin: const EdgeInsets.only(bottom: AppConstants.spacingM),
       padding: const EdgeInsets.all(AppConstants.spacingM),
       decoration: BoxDecoration(
-        color: AppConstants.primaryBlue.withOpacity(0.1),
+        color: AppConstants.primaryBlue.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(AppConstants.radiusM),
-        border: Border.all(color: AppConstants.primaryBlue.withOpacity(0.3)),
+        border: Border.all(
+          color: AppConstants.primaryBlue.withValues(alpha: 0.3),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -828,7 +849,7 @@ class _AIFairyPageState extends State<AIFairyPage>
             style: TextStyle(
               fontFamily: AppConstants.secondaryFont,
               fontSize: 14,
-              color: AppConstants.textDark.withOpacity(0.7),
+              color: AppConstants.textDark.withValues(alpha: 0.7),
               fontStyle: FontStyle.italic,
             ),
           ),

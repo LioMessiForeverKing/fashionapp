@@ -92,7 +92,7 @@ class _UploadPageState extends State<UploadPage> with TickerProviderStateMixin {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: AppConstants.textDark.withOpacity(0.3),
+                  color: AppConstants.textDark.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -149,10 +149,10 @@ class _UploadPageState extends State<UploadPage> with TickerProviderStateMixin {
       child: Container(
         padding: const EdgeInsets.all(AppConstants.spacingL),
         decoration: BoxDecoration(
-          color: AppConstants.primaryBlue.withOpacity(0.1),
+          color: AppConstants.primaryBlue.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(AppConstants.radiusL),
           border: Border.all(
-            color: AppConstants.primaryBlue.withOpacity(0.3),
+            color: AppConstants.primaryBlue.withValues(alpha: 0.3),
             width: 1,
           ),
         ),
@@ -548,7 +548,7 @@ class _UploadPageState extends State<UploadPage> with TickerProviderStateMixin {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(AppConstants.radiusL),
                   border: Border.all(
-                    color: AppConstants.primaryBlue.withOpacity(0.3),
+                    color: AppConstants.primaryBlue.withValues(alpha: 0.3),
                     width: 2,
                     style: BorderStyle.solid,
                   ),
@@ -567,7 +567,9 @@ class _UploadPageState extends State<UploadPage> with TickerProviderStateMixin {
                           Icon(
                             Icons.add_a_photo,
                             size: 48,
-                            color: AppConstants.primaryBlue.withOpacity(0.7),
+                            color: AppConstants.primaryBlue.withValues(
+                              alpha: 0.7,
+                            ),
                           ),
                           const SizedBox(height: AppConstants.spacingM),
                           Text(
@@ -575,7 +577,9 @@ class _UploadPageState extends State<UploadPage> with TickerProviderStateMixin {
                             style: TextStyle(
                               fontFamily: AppConstants.secondaryFont,
                               fontSize: 16,
-                              color: AppConstants.primaryBlue.withOpacity(0.7),
+                              color: AppConstants.primaryBlue.withValues(
+                                alpha: 0.7,
+                              ),
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -585,7 +589,9 @@ class _UploadPageState extends State<UploadPage> with TickerProviderStateMixin {
                             style: TextStyle(
                               fontFamily: AppConstants.secondaryFont,
                               fontSize: 12,
-                              color: AppConstants.textDark.withOpacity(0.5),
+                              color: AppConstants.textDark.withValues(
+                                alpha: 0.5,
+                              ),
                             ),
                           ),
                         ],
@@ -611,7 +617,9 @@ class _UploadPageState extends State<UploadPage> with TickerProviderStateMixin {
                           loadingBuilder: (context, child, loadingProgress) {
                             if (loadingProgress == null) return child;
                             return Container(
-                              color: AppConstants.neutralGray.withOpacity(0.1),
+                              color: AppConstants.neutralGray.withValues(
+                                alpha: 0.1,
+                              ),
                               child: const Center(
                                 child: CircularProgressIndicator(
                                   color: AppConstants.primaryBlue,
@@ -621,7 +629,9 @@ class _UploadPageState extends State<UploadPage> with TickerProviderStateMixin {
                           },
                           errorBuilder: (context, error, stackTrace) {
                             return Container(
-                              color: AppConstants.neutralGray.withOpacity(0.1),
+                              color: AppConstants.neutralGray.withValues(
+                                alpha: 0.1,
+                              ),
                               child: const Center(
                                 child: Icon(
                                   Icons.error_outline,
@@ -641,7 +651,7 @@ class _UploadPageState extends State<UploadPage> with TickerProviderStateMixin {
                     child: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: AppConstants.neutralWhite.withOpacity(0.9),
+                        color: AppConstants.neutralWhite.withValues(alpha: 0.9),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
@@ -697,7 +707,7 @@ class _UploadPageState extends State<UploadPage> with TickerProviderStateMixin {
             hintText: hintText,
             hintStyle: TextStyle(
               fontFamily: AppConstants.secondaryFont,
-              color: AppConstants.textDark.withOpacity(0.5),
+              color: AppConstants.textDark.withValues(alpha: 0.5),
             ),
             filled: true,
             fillColor: AppConstants.neutralWhite,
@@ -740,7 +750,7 @@ class _UploadPageState extends State<UploadPage> with TickerProviderStateMixin {
         ),
         const SizedBox(height: AppConstants.spacingS),
         DropdownButtonFormField<String>(
-          value: value,
+          initialValue: value,
           onChanged: onChanged,
           validator: validator,
           decoration: InputDecoration(
@@ -819,7 +829,7 @@ class _UploadPageState extends State<UploadPage> with TickerProviderStateMixin {
                       fontFamily: AppConstants.secondaryFont,
                       color: _purchaseDate != null
                           ? AppConstants.textDark
-                          : AppConstants.textDark.withOpacity(0.5),
+                          : AppConstants.textDark.withValues(alpha: 0.5),
                     ),
                   ),
                 ),
@@ -859,7 +869,7 @@ class _UploadPageState extends State<UploadPage> with TickerProviderStateMixin {
             hintText: 'e.g., 29.99',
             hintStyle: TextStyle(
               fontFamily: AppConstants.secondaryFont,
-              color: AppConstants.textDark.withOpacity(0.5),
+              color: AppConstants.textDark.withValues(alpha: 0.5),
             ),
             prefixText: '\$ ',
             filled: true,

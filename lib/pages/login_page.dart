@@ -144,11 +144,11 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                       shape: BoxShape.circle,
                                       gradient: RadialGradient(
                                         colors: [
-                                          AppConstants.neutralWhite.withOpacity(
-                                            0.3,
+                                          AppConstants.neutralWhite.withValues(
+                                            alpha: 0.3,
                                           ),
-                                          AppConstants.neutralWhite.withOpacity(
-                                            0.1,
+                                          AppConstants.neutralWhite.withValues(
+                                            alpha: 0.1,
                                           ),
                                           Colors.transparent,
                                         ],
@@ -188,7 +188,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                 fontFamily: AppConstants.secondaryFont,
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
-                                color: AppConstants.textDark.withOpacity(0.8),
+                                color: AppConstants.textDark.withValues(
+                                  alpha: 0.8,
+                                ),
                                 height: 1.4,
                               ),
                             ),
@@ -204,12 +206,16 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                             vertical: AppConstants.spacingM,
                           ),
                           decoration: BoxDecoration(
-                            color: AppConstants.neutralWhite.withOpacity(0.2),
+                            color: AppConstants.neutralWhite.withValues(
+                              alpha: 0.2,
+                            ),
                             borderRadius: BorderRadius.circular(
                               AppConstants.radiusXL,
                             ),
                             border: Border.all(
-                              color: AppConstants.neutralWhite.withOpacity(0.3),
+                              color: AppConstants.neutralWhite.withValues(
+                                alpha: 0.3,
+                              ),
                               width: 1,
                             ),
                           ),
@@ -220,7 +226,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                               fontFamily: AppConstants.secondaryFont,
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
-                              color: AppConstants.textDark.withOpacity(0.9),
+                              color: AppConstants.textDark.withValues(
+                                alpha: 0.9,
+                              ),
                               height: 1.3,
                             ),
                           ),
@@ -239,8 +247,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                   backgroundColor: AppConstants.neutralWhite,
                                   foregroundColor: AppConstants.textDark,
                                   elevation: 8,
-                                  shadowColor: AppConstants.textDark
-                                      .withOpacity(0.2),
+                                  shadowColor: AppConstants.textDark.withValues(
+                                    alpha: 0.2,
+                                  ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(
                                       AppConstants.radiusL,
@@ -248,7 +257,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                   ),
                                 ).copyWith(
                                   overlayColor: WidgetStateProperty.all(
-                                    AppConstants.primaryBlue.withOpacity(0.1),
+                                    AppConstants.primaryBlue.withValues(
+                                      alpha: 0.1,
+                                    ),
                                   ),
                                 ),
                             child: _isLoading
@@ -305,7 +316,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                           style: TextStyle(
                             fontFamily: AppConstants.secondaryFont,
                             fontSize: 12,
-                            color: AppConstants.textDark.withOpacity(0.6),
+                            color: AppConstants.textDark.withValues(alpha: 0.6),
                             height: 1.3,
                           ),
                         ),

@@ -19,6 +19,7 @@ class _OnboardingPageState extends State<OnboardingPage>
 
   // User preferences
   final List<String> _selectedStyles = [];
+  String? _selectedGender;
   String? _selectedAgeRange;
   String? _selectedBodyType;
   String? _selectedLifestyle;
@@ -26,6 +27,33 @@ class _OnboardingPageState extends State<OnboardingPage>
 
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
+
+  final List<Map<String, dynamic>> _genderOptions = [
+    {
+      'name': 'woman',
+      'displayName': 'Woman',
+      'emoji': '👩',
+      'description': 'Feminine styles and fits',
+    },
+    {
+      'name': 'man',
+      'displayName': 'Man',
+      'emoji': '👨',
+      'description': 'Masculine styles and fits',
+    },
+    {
+      'name': 'non-binary',
+      'displayName': 'Non-binary',
+      'emoji': '🧑',
+      'description': 'Gender-neutral and inclusive styles',
+    },
+    {
+      'name': 'prefer-not-to-say',
+      'displayName': 'Prefer not to say',
+      'emoji': '🤐',
+      'description': 'Keep it private',
+    },
+  ];
 
   final List<Map<String, dynamic>> _styleOptions = [
     {
@@ -155,6 +183,7 @@ class _OnboardingPageState extends State<OnboardingPage>
         bodyType: _selectedBodyType!,
         favoriteColors: _selectedColors,
         lifestyle: _selectedLifestyle!,
+        gender: _selectedGender!,
       );
 
       // Log the onboarding completion activity
@@ -260,8 +289,10 @@ class _OnboardingPageState extends State<OnboardingPage>
                     horizontal: AppConstants.spacingL,
                   ),
                   child: LinearProgressIndicator(
-                    value: (_currentPage + 1) / 4,
-                    backgroundColor: AppConstants.neutralWhite.withOpacity(0.3),
+                    value: (_currentPage + 1) / 5,
+                    backgroundColor: AppConstants.neutralWhite.withValues(
+                      alpha: 0.3,
+                    ),
                     valueColor: const AlwaysStoppedAnimation<Color>(
                       AppConstants.textDark,
                     ),
@@ -279,6 +310,7 @@ class _OnboardingPageState extends State<OnboardingPage>
                       setState(() => _currentPage = index);
                     },
                     children: [
+                      _buildGenderPage(),
                       _buildStylePage(),
                       _buildDemographicsPage(),
                       _buildColorPreferencesPage(),
@@ -299,7 +331,9 @@ class _OnboardingPageState extends State<OnboardingPage>
                         backgroundColor: AppConstants.neutralWhite,
                         foregroundColor: AppConstants.textDark,
                         elevation: 8,
-                        shadowColor: AppConstants.textDark.withOpacity(0.2),
+                        shadowColor: AppConstants.textDark.withValues(
+                          alpha: 0.2,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(
                             AppConstants.radiusL,
@@ -354,16 +388,131 @@ class _OnboardingPageState extends State<OnboardingPage>
   bool _canContinue() {
     switch (_currentPage) {
       case 0:
-        return _selectedStyles.isNotEmpty;
+        return _selectedGender != null;
       case 1:
-        return _selectedAgeRange != null && _selectedBodyType != null;
+        return _selectedStyles.isNotEmpty;
       case 2:
-        return _selectedColors.isNotEmpty;
+        return _selectedAgeRange != null && _selectedBodyType != null;
       case 3:
+        return _selectedColors.isNotEmpty;
+      case 4:
         return _selectedLifestyle != null;
       default:
         return false;
     }
+  }
+
+  Widget _buildGenderPage() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: AppConstants.spacingL),
+      child: Column(
+        children: [
+          Text(
+            'What\'s your gender?',
+            style: const TextStyle(
+              fontFamily: AppConstants.primaryFont,
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              color: AppConstants.textDark,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: AppConstants.spacingS),
+          Text(
+            'This helps us personalize your style recommendations',
+            style: TextStyle(
+              fontFamily: AppConstants.secondaryFont,
+              fontSize: 16,
+              color: AppConstants.textDark.withValues(alpha: 0.7),
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: AppConstants.spacingXL),
+          Expanded(
+            child: GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 1.2,
+                crossAxisSpacing: AppConstants.spacingM,
+                mainAxisSpacing: AppConstants.spacingM,
+              ),
+              itemCount: _genderOptions.length,
+              itemBuilder: (context, index) {
+                final option = _genderOptions[index];
+                final isSelected = _selectedGender == option['name'];
+
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _selectedGender = option['name'];
+                    });
+                  },
+                  child: AnimatedContainer(
+                    duration: AppConstants.animationFast,
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? AppConstants.accentPink
+                          : AppConstants.neutralWhite,
+                      borderRadius: BorderRadius.circular(AppConstants.radiusL),
+                      border: Border.all(
+                        color: isSelected
+                            ? AppConstants.accentPink
+                            : AppConstants.neutralWhite,
+                        width: 2,
+                      ),
+                      boxShadow: AppConstants.softShadow,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(AppConstants.spacingM),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            option['emoji'],
+                            style: const TextStyle(fontSize: 32),
+                          ),
+                          const SizedBox(height: AppConstants.spacingS),
+                          Text(
+                            option['displayName'],
+                            style: TextStyle(
+                              fontFamily: AppConstants.primaryFont,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: isSelected
+                                  ? AppConstants.neutralWhite
+                                  : AppConstants.textDark,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: AppConstants.spacingXS),
+                          Text(
+                            option['description'],
+                            style: TextStyle(
+                              fontFamily: AppConstants.secondaryFont,
+                              fontSize: 12,
+                              color: isSelected
+                                  ? AppConstants.neutralWhite.withValues(
+                                      alpha: 0.8,
+                                    )
+                                  : AppConstants.textDark.withValues(
+                                      alpha: 0.6,
+                                    ),
+                            ),
+                            textAlign: TextAlign.center,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildStylePage() {
@@ -376,7 +525,7 @@ class _OnboardingPageState extends State<OnboardingPage>
             style: TextStyle(
               fontFamily: AppConstants.secondaryFont,
               fontSize: 14,
-              color: AppConstants.textDark.withOpacity(0.8),
+              color: AppConstants.textDark.withValues(alpha: 0.8),
             ),
           ),
           const SizedBox(height: AppConstants.spacingL),
@@ -409,12 +558,12 @@ class _OnboardingPageState extends State<OnboardingPage>
                     decoration: BoxDecoration(
                       color: isSelected
                           ? AppConstants.neutralWhite
-                          : AppConstants.neutralWhite.withOpacity(0.3),
+                          : AppConstants.neutralWhite.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(AppConstants.radiusM),
                       border: Border.all(
                         color: isSelected
                             ? AppConstants.textDark
-                            : AppConstants.neutralWhite.withOpacity(0.5),
+                            : AppConstants.neutralWhite.withValues(alpha: 0.5),
                         width: isSelected ? 2 : 1,
                       ),
                       boxShadow: isSelected ? AppConstants.softShadow : null,
@@ -443,7 +592,7 @@ class _OnboardingPageState extends State<OnboardingPage>
                           style: TextStyle(
                             fontFamily: AppConstants.secondaryFont,
                             fontSize: 10,
-                            color: AppConstants.textDark.withOpacity(0.7),
+                            color: AppConstants.textDark.withValues(alpha: 0.7),
                           ),
                         ),
                       ],
@@ -499,7 +648,7 @@ class _OnboardingPageState extends State<OnboardingPage>
             style: TextStyle(
               fontFamily: AppConstants.secondaryFont,
               fontSize: 14,
-              color: AppConstants.textDark.withOpacity(0.8),
+              color: AppConstants.textDark.withValues(alpha: 0.8),
             ),
           ),
           const SizedBox(height: AppConstants.spacingM),
@@ -537,7 +686,7 @@ class _OnboardingPageState extends State<OnboardingPage>
                       border: Border.all(
                         color: isSelected
                             ? AppConstants.textDark
-                            : AppConstants.neutralWhite.withOpacity(0.5),
+                            : AppConstants.neutralWhite.withValues(alpha: 0.5),
                         width: isSelected ? 3 : 2,
                       ),
                       boxShadow: isSelected ? AppConstants.softShadow : null,
@@ -592,7 +741,7 @@ class _OnboardingPageState extends State<OnboardingPage>
     return Container(
       padding: const EdgeInsets.all(AppConstants.spacingM),
       decoration: BoxDecoration(
-        color: AppConstants.neutralWhite.withOpacity(0.9),
+        color: AppConstants.neutralWhite.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(AppConstants.radiusL),
         boxShadow: AppConstants.softShadow,
       ),
@@ -639,7 +788,7 @@ class _OnboardingPageState extends State<OnboardingPage>
         ),
         decoration: BoxDecoration(
           color: isSelected
-              ? AppConstants.primaryBlue.withOpacity(0.3)
+              ? AppConstants.primaryBlue.withValues(alpha: 0.3)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
           border: Border.all(

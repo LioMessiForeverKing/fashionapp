@@ -241,7 +241,7 @@ class _InspirationFeedPageState extends State<InspirationFeedPage>
                 icon: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: AppConstants.primaryBlue.withOpacity(0.1),
+                    color: AppConstants.primaryBlue.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(AppConstants.radiusM),
                   ),
                   child: const Icon(
@@ -270,7 +270,7 @@ class _InspirationFeedPageState extends State<InspirationFeedPage>
                 hintText: 'Search for styles, colors, occasions...',
                 hintStyle: TextStyle(
                   fontFamily: AppConstants.secondaryFont,
-                  color: AppConstants.textDark.withOpacity(0.5),
+                  color: AppConstants.textDark.withValues(alpha: 0.5),
                 ),
                 prefixIcon: const Icon(
                   Icons.search,
@@ -355,7 +355,7 @@ class _InspirationFeedPageState extends State<InspirationFeedPage>
             fontWeight: FontWeight.w500,
           ),
         ),
-        backgroundColor: AppConstants.primaryBlue.withOpacity(0.1),
+        backgroundColor: AppConstants.primaryBlue.withValues(alpha: 0.1),
         deleteIcon: const Icon(
           Icons.close,
           size: 16,
@@ -411,7 +411,7 @@ class _InspirationFeedPageState extends State<InspirationFeedPage>
             style: TextStyle(
               fontFamily: AppConstants.secondaryFont,
               fontSize: 14,
-              color: AppConstants.textDark.withOpacity(0.6),
+              color: AppConstants.textDark.withValues(alpha: 0.6),
             ),
           ),
           const SizedBox(height: AppConstants.spacingL),
@@ -511,7 +511,7 @@ class _InspirationFeedPageState extends State<InspirationFeedPage>
                       end: Alignment.bottomCenter,
                       colors: [
                         Colors.transparent,
-                        Colors.black.withOpacity(0.7),
+                        Colors.black.withValues(alpha: 0.7),
                       ],
                     ),
                   ),
@@ -527,7 +527,7 @@ class _InspirationFeedPageState extends State<InspirationFeedPage>
                   child: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: AppConstants.neutralWhite.withOpacity(0.9),
+                      color: AppConstants.neutralWhite.withValues(alpha: 0.9),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
@@ -569,7 +569,9 @@ class _InspirationFeedPageState extends State<InspirationFeedPage>
                         style: TextStyle(
                           fontFamily: AppConstants.secondaryFont,
                           fontSize: 12,
-                          color: AppConstants.neutralWhite.withOpacity(0.8),
+                          color: AppConstants.neutralWhite.withValues(
+                            alpha: 0.8,
+                          ),
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -614,7 +616,7 @@ class _InspirationFeedPageState extends State<InspirationFeedPage>
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: AppConstants.textDark.withOpacity(0.3),
+              color: AppConstants.textDark.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -847,7 +849,7 @@ class _InspirationFeedPageState extends State<InspirationFeedPage>
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: AppConstants.textDark.withOpacity(0.3),
+              color: AppConstants.textDark.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -874,7 +876,7 @@ class _InspirationFeedPageState extends State<InspirationFeedPage>
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: isSaved
-                          ? AppConstants.accentCoral.withOpacity(0.1)
+                          ? AppConstants.accentCoral.withValues(alpha: 0.1)
                           : AppConstants.neutralGray,
                       borderRadius: BorderRadius.circular(AppConstants.radiusM),
                     ),
@@ -1063,7 +1065,7 @@ class _InspirationFeedPageState extends State<InspirationFeedPage>
                     vertical: AppConstants.spacingS,
                   ),
                   decoration: BoxDecoration(
-                    color: AppConstants.primaryBlue.withOpacity(0.1),
+                    color: AppConstants.primaryBlue.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(AppConstants.radiusL),
                   ),
                   child: Text(
@@ -1109,7 +1111,7 @@ class _InspirationFeedPageState extends State<InspirationFeedPage>
                     color: _getColorFromString(color.toString()),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: AppConstants.textDark.withOpacity(0.2),
+                      color: AppConstants.textDark.withValues(alpha: 0.2),
                       width: 1,
                     ),
                   ),

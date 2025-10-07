@@ -328,7 +328,7 @@ class _ClosetPageState extends State<ClosetPage> with TickerProviderStateMixin {
               hintText: 'Search your closet...',
               hintStyle: TextStyle(
                 fontFamily: AppConstants.secondaryFont,
-                color: AppConstants.textDark.withOpacity(0.5),
+                color: AppConstants.textDark.withValues(alpha: 0.5),
               ),
               prefixIcon: const Icon(
                 Icons.search,
@@ -422,7 +422,7 @@ class _ClosetPageState extends State<ClosetPage> with TickerProviderStateMixin {
             color: AppConstants.primaryBlue,
           ),
         ),
-        backgroundColor: AppConstants.primaryBlue.withOpacity(0.1),
+        backgroundColor: AppConstants.primaryBlue.withValues(alpha: 0.1),
         deleteIcon: const Icon(
           Icons.close,
           size: 16,
@@ -484,7 +484,7 @@ class _ClosetPageState extends State<ClosetPage> with TickerProviderStateMixin {
             style: TextStyle(
               fontFamily: AppConstants.secondaryFont,
               fontSize: 14,
-              color: AppConstants.textDark.withOpacity(0.6),
+              color: AppConstants.textDark.withValues(alpha: 0.6),
             ),
           ),
           const SizedBox(height: AppConstants.spacingL),
@@ -629,7 +629,7 @@ class _ClosetPageState extends State<ClosetPage> with TickerProviderStateMixin {
                   child: Container(
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
-                      color: AppConstants.neutralWhite.withOpacity(0.9),
+                      color: AppConstants.neutralWhite.withValues(alpha: 0.9),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
@@ -653,7 +653,7 @@ class _ClosetPageState extends State<ClosetPage> with TickerProviderStateMixin {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: AppConstants.primaryBlue.withOpacity(0.9),
+                    color: AppConstants.primaryBlue.withValues(alpha: 0.9),
                     borderRadius: BorderRadius.circular(AppConstants.radiusS),
                   ),
                   child: Text(
@@ -681,7 +681,7 @@ class _ClosetPageState extends State<ClosetPage> with TickerProviderStateMixin {
                       end: Alignment.bottomCenter,
                       colors: [
                         Colors.transparent,
-                        Colors.black.withOpacity(0.8),
+                        Colors.black.withValues(alpha: 0.8),
                       ],
                     ),
                   ),
@@ -707,7 +707,9 @@ class _ClosetPageState extends State<ClosetPage> with TickerProviderStateMixin {
                           style: TextStyle(
                             fontFamily: AppConstants.secondaryFont,
                             fontSize: 12,
-                            color: AppConstants.neutralWhite.withOpacity(0.8),
+                            color: AppConstants.neutralWhite.withValues(
+                              alpha: 0.8,
+                            ),
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -785,7 +787,7 @@ class _ClosetPageState extends State<ClosetPage> with TickerProviderStateMixin {
                 style: TextStyle(
                   fontFamily: AppConstants.secondaryFont,
                   fontSize: 14,
-                  color: AppConstants.textDark.withOpacity(0.7),
+                  color: AppConstants.textDark.withValues(alpha: 0.7),
                 ),
               ),
             const SizedBox(height: 4),
@@ -797,7 +799,7 @@ class _ClosetPageState extends State<ClosetPage> with TickerProviderStateMixin {
                     vertical: 2,
                   ),
                   decoration: BoxDecoration(
-                    color: AppConstants.primaryBlue.withOpacity(0.1),
+                    color: AppConstants.primaryBlue.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(AppConstants.radiusS),
                   ),
                   child: Text(
@@ -820,7 +822,7 @@ class _ClosetPageState extends State<ClosetPage> with TickerProviderStateMixin {
                     ),
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: AppConstants.textDark.withOpacity(0.2),
+                      color: AppConstants.textDark.withValues(alpha: 0.2),
                       width: 1,
                     ),
                   ),
@@ -835,7 +837,7 @@ class _ClosetPageState extends State<ClosetPage> with TickerProviderStateMixin {
             isFavorite ? Icons.favorite : Icons.favorite_border,
             color: isFavorite
                 ? AppConstants.accentCoral
-                : AppConstants.textDark.withOpacity(0.5),
+                : AppConstants.textDark.withValues(alpha: 0.5),
           ),
         ),
         onTap: () => _showItemDetail(item),
@@ -852,8 +854,8 @@ class _ClosetPageState extends State<ClosetPage> with TickerProviderStateMixin {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            AppConstants.neutralGray.withOpacity(0.3),
-            AppConstants.neutralGray.withOpacity(0.6),
+            AppConstants.neutralGray.withValues(alpha: 0.3),
+            AppConstants.neutralGray.withValues(alpha: 0.6),
           ],
         ),
       ),
@@ -872,8 +874,8 @@ class _ClosetPageState extends State<ClosetPage> with TickerProviderStateMixin {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            AppConstants.neutralGray.withOpacity(0.3),
-            AppConstants.neutralGray.withOpacity(0.6),
+            AppConstants.neutralGray.withValues(alpha: 0.3),
+            AppConstants.neutralGray.withValues(alpha: 0.6),
           ],
         ),
       ),

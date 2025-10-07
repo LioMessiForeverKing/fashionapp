@@ -162,7 +162,7 @@ class InspirationService {
         );
       }
     } catch (e) {
-      print('Error fetching inspiration feed: $e');
+      // Error fetching inspiration feed: $e
       // Fallback to sample data if database fails
       return _getFilteredSampleData(
         searchQuery: searchQuery,
@@ -231,7 +231,7 @@ class InspirationService {
         'created_at': DateTime.now().toIso8601String(),
       });
     } catch (e) {
-      print('Error saving inspiration: $e');
+      // Error saving inspiration: $e
       throw Exception('Failed to save inspiration');
     }
   }
@@ -249,7 +249,7 @@ class InspirationService {
           .eq('user_id', user.id)
           .eq('inspiration_id', inspirationId);
     } catch (e) {
-      print('Error unsaving inspiration: $e');
+      // Error unsaving inspiration: $e
       throw Exception('Failed to unsave inspiration');
     }
   }
@@ -272,7 +272,7 @@ class InspirationService {
 
       return List<Map<String, dynamic>>.from(response);
     } catch (e) {
-      print('Error fetching saved inspirations: $e');
+      // Error fetching saved inspirations: $e
       return [];
     }
   }
@@ -293,7 +293,7 @@ class InspirationService {
 
       return response != null;
     } catch (e) {
-      print('Error checking if inspiration is saved: $e');
+      // Error checking if inspiration is saved: $e
       return false;
     }
   }

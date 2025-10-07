@@ -69,7 +69,7 @@ class _HomePageState extends State<HomePage> {
         ),
         decoration: BoxDecoration(
           color: isSelected
-              ? AppConstants.primaryBlue.withOpacity(0.1)
+              ? AppConstants.primaryBlue.withValues(alpha: 0.1)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(AppConstants.radiusM),
         ),
@@ -80,7 +80,7 @@ class _HomePageState extends State<HomePage> {
               icon,
               color: isSelected
                   ? AppConstants.textDark
-                  : AppConstants.textDark.withOpacity(0.6),
+                  : AppConstants.textDark.withValues(alpha: 0.6),
               size: 24,
             ),
             const SizedBox(height: AppConstants.spacingXS),
@@ -92,7 +92,7 @@ class _HomePageState extends State<HomePage> {
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 color: isSelected
                     ? AppConstants.textDark
-                    : AppConstants.textDark.withOpacity(0.6),
+                    : AppConstants.textDark.withValues(alpha: 0.6),
               ),
             ),
           ],

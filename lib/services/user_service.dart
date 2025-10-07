@@ -31,10 +31,10 @@ class UserService {
           'created_at': DateTime.now().toIso8601String(),
           'updated_at': DateTime.now().toIso8601String(),
         });
-        print('Basic user record created successfully');
+        // User record created successfully
       }
     } catch (e) {
-      print('Error creating basic user record: $e');
+      // Error creating basic user record: $e
       // Don't throw here as this is not critical for auth flow
     }
   }
@@ -46,6 +46,7 @@ class UserService {
     required String bodyType,
     required List<String> favoriteColors,
     required String lifestyle,
+    required String gender,
   }) async {
     final user = currentUser;
     if (user == null) {
@@ -67,6 +68,7 @@ class UserService {
           'age_range': ageRange,
           'body_type': bodyType,
           'lifestyle': lifestyle,
+          'gender': gender,
         },
         'color_preferences': {
           'favorite_colors': favoriteColors,
@@ -87,9 +89,9 @@ class UserService {
       // Insert or update user profile
       await _supabase.from('users').upsert(userData, onConflict: 'id');
 
-      print('User profile updated successfully');
+      // User profile updated successfully
     } catch (e) {
-      print('Error updating user profile: $e');
+      // Error updating user profile: $e
       throw Exception('Failed to update user profile: $e');
     }
   }
@@ -110,7 +112,7 @@ class UserService {
 
       return response;
     } catch (e) {
-      print('Error fetching user profile: $e');
+      // Error fetching user profile: $e
       return null;
     }
   }
@@ -137,7 +139,7 @@ class UserService {
           colorPreferences != null &&
           colorPreferences.isNotEmpty;
     } catch (e) {
-      print('Error checking onboarding status: $e');
+      // Error checking onboarding status: $e
       return false;
     }
   }
@@ -178,9 +180,9 @@ class UserService {
 
       await _supabase.from('users').update(updateData).eq('id', user.id);
 
-      print('User preferences updated successfully');
+      // User preferences updated successfully
     } catch (e) {
-      print('Error updating user preferences: $e');
+      // Error updating user preferences: $e
       throw Exception('Failed to update user preferences: $e');
     }
   }
@@ -201,7 +203,7 @@ class UserService {
         'created_at': DateTime.now().toIso8601String(),
       });
     } catch (e) {
-      print('Error logging activity: $e');
+      // Error logging activity: $e
       // Don't throw here as this is not critical
     }
   }

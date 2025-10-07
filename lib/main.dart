@@ -54,10 +54,8 @@ class _AuthWrapperState extends State<AuthWrapper> {
   }
 
   Future<void> _checkInitialAuthState() async {
-    final session = Supabase.instance.client.auth.currentSession;
-    print(
-      'Initial auth state - Session: ${session?.user.email ?? "No session"}',
-    );
+    // Check initial auth state
+    Supabase.instance.client.auth.currentSession;
   }
 
   @override
@@ -78,13 +76,11 @@ class _AuthWrapperState extends State<AuthWrapper> {
         }
 
         final session = snapshot.data?.session;
-        print(
-          'Auth state changed - Session: ${session?.user.email ?? "No session"}',
-        );
+        // Auth state changed - Session: ${session?.user.email ?? "No session"}
 
         if (session == null) {
           // User is not authenticated
-          print('No session found, showing login page');
+          // No session found, showing login page
           return const LoginPage();
         }
 
@@ -105,15 +101,15 @@ class _AuthWrapperState extends State<AuthWrapper> {
             }
 
             final hasCompletedOnboarding = onboardingSnapshot.data ?? false;
-            print('Onboarding status: $hasCompletedOnboarding');
+            // Onboarding status: $hasCompletedOnboarding
 
             if (!hasCompletedOnboarding) {
-              print('User needs onboarding, showing onboarding page');
+              // User needs onboarding, showing onboarding page
               return const OnboardingPage();
             }
 
             // User is authenticated and onboarded
-            print('User completed onboarding, showing homepage');
+            // User completed onboarding, showing homepage
             return const HomePage();
           },
         );
