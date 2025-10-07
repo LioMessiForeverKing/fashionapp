@@ -37,6 +37,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
+    _validateProfileValues();
     _loadUserProfile();
   }
 
@@ -46,6 +47,57 @@ class _ProfilePageState extends State<ProfilePage> {
     _ageController.dispose();
     _bioController.dispose();
     super.dispose();
+  }
+
+  void _validateProfileValues() {
+    // Valid gender options
+    const validGenders = ['woman', 'man', 'non-binary', 'prefer-not-to-say'];
+    if (_selectedGender != null && !validGenders.contains(_selectedGender)) {
+      _selectedGender = null;
+    }
+
+    // Valid style preferences
+    const validStyles = [
+      'minimalist',
+      'bohemian',
+      'classic',
+      'edgy',
+      'romantic',
+      'sporty',
+      'vintage',
+      'trendy',
+    ];
+    if (_selectedStylePreference != null &&
+        !validStyles.contains(_selectedStylePreference)) {
+      _selectedStylePreference = null;
+    }
+
+    // Valid body types
+    const validBodyTypes = ['petite', 'athletic', 'curvy', 'tall', 'plus-size'];
+    if (_selectedBodyType != null &&
+        !validBodyTypes.contains(_selectedBodyType)) {
+      _selectedBodyType = null;
+    }
+
+    // Valid budget ranges
+    const validBudgets = ['budget-friendly', 'mid-range', 'high-end', 'luxury'];
+    if (_selectedBudget != null && !validBudgets.contains(_selectedBudget)) {
+      _selectedBudget = null;
+    }
+
+    // Valid lifestyles
+    const validLifestyles = [
+      'student',
+      'professional',
+      'creative',
+      'athlete',
+      'stay-at-home',
+      'entrepreneur',
+    ];
+    if (_selectedLifestyle != null &&
+        !validLifestyles.contains(_selectedLifestyle)) {
+      _selectedLifestyle = null;
+    }
   }
 
   Future<void> _loadUserProfile() async {
@@ -666,7 +718,7 @@ class _ProfilePageState extends State<ProfilePage> {
     required void Function(String?) onChanged,
   }) {
     return DropdownButtonFormField<String>(
-      initialValue: value,
+      value: value != null && items.contains(value) ? value : null,
       onChanged: enabled ? onChanged : null,
       decoration: InputDecoration(
         labelText: label,

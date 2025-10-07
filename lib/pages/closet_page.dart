@@ -45,6 +45,7 @@ class _ClosetPageState extends State<ClosetPage> with TickerProviderStateMixin {
       CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
     );
 
+    _validateFilterValues();
     _loadClothingItems();
     _scrollController.addListener(_onScroll);
   }
@@ -63,6 +64,33 @@ class _ClosetPageState extends State<ClosetPage> with TickerProviderStateMixin {
         !_isLoading) {
       _loadMoreItems();
     }
+  }
+
+  void _validateFilterValues() {
+    final filterOptions = ClosetService.getFilterOptions();
+
+    // Validate category
+    if (_selectedCategory != null &&
+        !filterOptions['categories']!.contains(_selectedCategory)) {
+      _selectedCategory = null;
+    }
+
+    // Validate season
+    if (_selectedSeason != null &&
+        !filterOptions['seasons']!.contains(_selectedSeason)) {
+      _selectedSeason = null;
+    }
+
+    // Validate formality
+    if (_selectedFormality != null &&
+        !filterOptions['formality']!.contains(_selectedFormality)) {
+      _selectedFormality = null;
+    }
+
+    // Validate colors
+    _selectedColors = _selectedColors
+        .where((color) => filterOptions['colors']!.contains(color))
+        .toList();
   }
 
   Future<void> _loadClothingItems() async {
@@ -1582,7 +1610,9 @@ class _ClosetPageState extends State<ClosetPage> with TickerProviderStateMixin {
         ),
         const SizedBox(height: AppConstants.spacingM),
         DropdownButtonFormField<String>(
-          value: selectedValue,
+          value: selectedValue != null && options.contains(selectedValue)
+              ? selectedValue
+              : null,
           onChanged: onChanged,
           decoration: InputDecoration(
             filled: true,

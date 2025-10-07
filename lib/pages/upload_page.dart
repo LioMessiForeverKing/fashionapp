@@ -750,7 +750,7 @@ class _UploadPageState extends State<UploadPage> with TickerProviderStateMixin {
         ),
         const SizedBox(height: AppConstants.spacingS),
         DropdownButtonFormField<String>(
-          initialValue: value,
+          value: value != null && options.contains(value) ? value : null,
           onChanged: onChanged,
           validator: validator,
           decoration: InputDecoration(
