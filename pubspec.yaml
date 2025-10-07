@@ -12,6 +12,8 @@ dependencies:
   supabase_flutter: ^2.9.1
   google_sign_in: ^6.2.1
   http: ^1.1.0
+  image_picker: ^1.0.4
+  google_generative_ai: ^0.2.2
 
 dev_dependencies:
   flutter_test:

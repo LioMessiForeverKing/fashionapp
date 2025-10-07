@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
 import '../utils/constants.dart';
 import 'inspiration_feed_page.dart';
+import 'closet_page.dart';
+import 'upload_page.dart';
+import 'ai_fairy_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,6 +20,7 @@ class _HomePageState extends State<HomePage> {
     const InspirationFeedPage(),
     const ClosetPage(),
     const UploadPage(),
+    const AIFairyPage(),
     const ProfilePage(),
   ];
 
@@ -41,7 +45,8 @@ class _HomePageState extends State<HomePage> {
                 _buildNavItem(0, Icons.auto_awesome, 'Inspo'),
                 _buildNavItem(1, Icons.checkroom, 'Closet'),
                 _buildNavItem(2, Icons.camera_alt, 'Upload'),
-                _buildNavItem(3, Icons.person, 'Profile'),
+                _buildNavItem(3, Icons.auto_awesome, 'Fairy'),
+                _buildNavItem(4, Icons.person, 'Profile'),
               ],
             ),
           ),
@@ -98,76 +103,6 @@ class _HomePageState extends State<HomePage> {
 }
 
 // Placeholder pages for now
-
-class ClosetPage extends StatelessWidget {
-  const ClosetPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          '👗 My Closet',
-          style: TextStyle(
-            fontFamily: AppConstants.primaryFont,
-            fontSize: 24,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        backgroundColor: AppConstants.neutralWhite,
-        elevation: 0,
-        actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.settings)),
-        ],
-      ),
-      body: const Center(
-        child: Text(
-          'Your Digital Closet\nComing Soon! 👗',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: AppConstants.secondaryFont,
-            fontSize: 18,
-            color: AppConstants.textDark,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class UploadPage extends StatelessWidget {
-  const UploadPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          '📷 Add Item',
-          style: TextStyle(
-            fontFamily: AppConstants.primaryFont,
-            fontSize: 24,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        backgroundColor: AppConstants.neutralWhite,
-        elevation: 0,
-      ),
-      body: const Center(
-        child: Text(
-          'Camera & Upload\nComing Soon! 📷',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: AppConstants.secondaryFont,
-            fontSize: 18,
-            color: AppConstants.textDark,
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});

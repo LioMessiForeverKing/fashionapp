@@ -12,6 +12,9 @@ class AppConstants {
   static const String kGoogleIosClientId =
       '108734757179-06vdgfpb9q01pr17bj3bqe9h32gvbnm8.apps.googleusercontent.com';
 
+  // Gemini AI Configuration
+  static const String kGeminiApiKey = 'AIzaSyAXY2SoI8nlm21Ch4bFLKmqQAv07r6hMbo';
+
   // Design System - Color Palette
   static const Color primaryBlue = Color(0xFFE6F3FF);
   static const Color accentCoral = Color(0xFFFFB5A3);
